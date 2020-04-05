@@ -1,0 +1,41 @@
+{
+  "name": "fem",
+  "version": "0.0.1",
+  "description": "Helper pages for my Lectures",
+  "productName": "Lectures",
+  "cordovaId": "org.cordova.quasar.app",
+  "capacitorId": "",
+  "author": "Murat <sapedit@hotmail.com>",
+  "private": true,
+  "scripts": {
+    "lint": "eslint --ext .js,.vue src",
+    "test": "echo \"No test specified\" && exit 0"
+  },
+  "dependencies": {
+    "@quasar/extras": "^1.6.1",
+    "axios": "^0.18.1",
+    "jsxgraph": "^1.0.0",
+    "quasar": "^1.9.12",
+    "vue-i18n": "^8.0.0"
+  },
+  "devDependencies": {
+    "@quasar/app": "^1.6.1",
+    "babel-eslint": "^10.0.1",
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-loader": "^3.0.3",
+    "eslint-plugin-import": "^2.20.1",
+    "eslint-plugin-vue": "^6.1.2"
+  },
+  "engines": {
+    "node": ">= 10.18.1",
+    "npm": ">= 6.13.4",
+    "yarn": ">= 1.21.1"
+  },
+  "browserslist": [
+    "last 1 version, not dead, ie >= 11"
+  ],
+  "resolutions": {
+    "@babel/parser": "7.7.5"
+  }
+}
