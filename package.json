@@ -12,10 +12,10 @@
     "test": "echo \"No test specified\" && exit 0"
   },
   "dependencies": {
-    "@quasar/extras": "^1.6.1",
+    "@quasar/extras": "^1.6.2",
     "axios": "^0.18.1",
     "jsxgraph": "^1.0.0",
-    "quasar": "^1.9.13",
+    "quasar": "^1.9.14",
     "vue-i18n": "^8.0.0"
   },
   "devDependencies": {
