@@ -8,11 +8,13 @@
               (Horizontal Displacement)
               <br />u(X, Y) = A1 + A2 X + A3 Y + A4 X
               <sup>2</sup> + A5 Y
-              <sup>2</sup> + A6 X Y
+              <sup>2</sup> + A6 XY
               <br />(Vertical Displacement)
               <br />v(X, Y) = B1 + B2 X + B3 Y + B4 X
               <sup>2</sup> + B5 Y
-              <sup>2</sup> + B6 X Y
+              <sup>2</sup> + B6 XY
+              <br>
+              <q-btn label="SET ZERO" @click="SET_ZERO"/>
               <q-markup-table>
                 <thead>
                   <tr>
@@ -61,32 +63,32 @@
             <div>
               u(X, Y) =
               <span v-if="A1">{{A1}}</span>
-              <span v-if="A2">+{{A2}}X</span>
-              <span v-if="A3">+{{A3}}Y</span>
+              <span v-if="A2">+{{A2 | FORMAT}}X</span>
+              <span v-if="A3">+{{A3 | FORMAT}}Y</span>
               <span v-if="A4">
-                +{{A4}}X
+                +{{A4 | FORMAT}}X
                 <sup>2</sup>
               </span>
               <span v-if="A5">
-                +{{A5}}Y
+                +{{A5 | FORMAT}}Y
                 <sup>2</sup>
               </span>
-              <span v-if="A6">+{{A6}}X Y</span>
+              <span v-if="A6">+{{A6 | FORMAT}}XY</span>
             </div>
             <div>
               v(X, Y) =
               <span v-if="B1">{{B1}}</span>
-              <span v-if="B2">+{{B2}}X</span>
-              <span v-if="B3">+{{B3}}Y</span>
+              <span v-if="B2">+{{B2 | FORMAT}}X</span>
+              <span v-if="B3">+{{B3 | FORMAT}}Y</span>
               <span v-if="B4">
-                +{{B4}}X
+                +{{B4 | FORMAT}}X
                 <sup>2</sup>
               </span>
               <span v-if="B5">
-                +{{B5}}Y
+                +{{B5 | FORMAT}}Y
                 <sup>2</sup>
               </span>
-              <span v-if="B6">+{{B6}}X Y</span>
+              <span v-if="B6">+{{B6 | FORMAT}}XY</span>
             </div>
             <div id="jxgbox" class="jxgbox col" style="width:500px; height:300px"></div>
           </div>
@@ -206,6 +208,9 @@ export default {
   },
 
   methods: {
+    SET_ZERO () {
+      this.coeffs = {}
+    },
     SET_INITIAL() {
       this.state = "INITIAL";
       let k = 0;
@@ -247,6 +252,15 @@ export default {
           k += 1;
         }
       }
+    }
+  },
+
+  filters: {
+    FORMAT(val) {
+      // Show in multiplier form 3 X
+      if (val == 1) return "";
+      if (val == -1) return "-";
+      return val;
     }
   }
 };
