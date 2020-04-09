@@ -6,9 +6,13 @@
           <div class="q-pa-xs">
             <div class="col">
               (Horizontal Displacement)
-              <br />u(X, Y) = A1 + A2 X + A3 Y + A4  X<sup>2</sup> + A5 Y<sup>2</sup> + A6 X Y
+              <br />u(X, Y) = A1 + A2 X + A3 Y + A4 X
+              <sup>2</sup> + A5 Y
+              <sup>2</sup> + A6 X Y
               <br />(Vertical Displacement)
-              <br />v(X, Y) = B1 + B2 X + B3 Y + B4 X<sup>2</sup> + B5  Y<sup>2</sup> + B6 X Y
+              <br />v(X, Y) = B1 + B2 X + B3 Y + B4 X
+              <sup>2</sup> + B5 Y
+              <sup>2</sup> + B6 X Y
               <q-markup-table>
                 <thead>
                   <tr>
@@ -56,21 +60,33 @@
           <div class="q-pa-xs">
             <div>
               u(X, Y) =
-              <span v-if="coeffs.A1">{{coeffs.A1}}</span>
-              <span v-if="coeffs.A2">+{{coeffs.A2}}X</span>
-              <span v-if="coeffs.A3">+{{coeffs.A3}}Y</span>
-              <span v-if="coeffs.A4">+{{coeffs.A4}}X<sup>2</sup></span>
-              <span v-if="coeffs.A5">+{{coeffs.A5}}Y<sup>2</sup></span>
-              <span v-if="coeffs.A6">+{{coeffs.A6}}X Y</span>
+              <span v-if="A1">{{A1}}</span>
+              <span v-if="A2">+{{A2}}X</span>
+              <span v-if="A3">+{{A3}}Y</span>
+              <span v-if="A4">
+                +{{A4}}X
+                <sup>2</sup>
+              </span>
+              <span v-if="A5">
+                +{{A5}}Y
+                <sup>2</sup>
+              </span>
+              <span v-if="A6">+{{A6}}X Y</span>
             </div>
             <div>
               v(X, Y) =
-              <span v-if="coeffs.B1">{{coeffs.B1}}</span>
-              <span v-if="coeffs.B2">+{{coeffs.B2}}X</span>
-              <span v-if="coeffs.B3">+{{coeffs.B3}}Y</span>
-              <span v-if="coeffs.B4">+{{coeffs.B4}}X<sup>2</sup></span>
-              <span v-if="coeffs.B5">+{{coeffs.B5}}Y<sup>2</sup></span>
-              <span v-if="coeffs.B6">+{{coeffs.B6}}X Y</span>
+              <span v-if="B1">{{B1}}</span>
+              <span v-if="B2">+{{B2}}X</span>
+              <span v-if="B3">+{{B3}}Y</span>
+              <span v-if="B4">
+                +{{B4}}X
+                <sup>2</sup>
+              </span>
+              <span v-if="B5">
+                +{{B5}}Y
+                <sup>2</sup>
+              </span>
+              <span v-if="B6">+{{B6}}X Y</span>
             </div>
             <div id="jxgbox" class="jxgbox col" style="width:500px; height:300px"></div>
           </div>
@@ -83,6 +99,9 @@
 <script>
 import JXG from "jsxgraph";
 const points = [];
+const PF = val => {
+  return val ? parseFloat(val) : 0;
+};
 
 export default {
   name: "PageIndex",
@@ -112,6 +131,42 @@ export default {
     },
     FINAL() {
       return this.state === "FINAL";
+    },
+    A1() {
+      return PF(this.coeffs.A1);
+    },
+    A2() {
+      return PF(this.coeffs.A2);
+    },
+    A3() {
+      return PF(this.coeffs.A3);
+    },
+    A4() {
+      return PF(this.coeffs.A4);
+    },
+    A5() {
+      return PF(this.coeffs.A5);
+    },
+    A6() {
+      return PF(this.coeffs.A6);
+    },
+    B1() {
+      return PF(this.coeffs.B1);
+    },
+    B2() {
+      return PF(this.coeffs.B2);
+    },
+    B3() {
+      return PF(this.coeffs.B3);
+    },
+    B4() {
+      return PF(this.coeffs.B4);
+    },
+    B5() {
+      return PF(this.coeffs.B5);
+    },
+    B6() {
+      return PF(this.coeffs.B6);
     }
   },
 
@@ -119,8 +174,7 @@ export default {
     coeffs: {
       deep: true,
       handler(n) {
-        console.log("Coeffs:", n);
-        this.SET_INITIAL()
+        this.SET_INITIAL();
       }
     }
   },
@@ -180,21 +234,7 @@ export default {
           let xx = 2 * x;
           let yy = 2 * y;
 
-          let { A1, A2, A3, A4, A5, A6, B1, B2, B3, B4, B5, B6 } = this.coeffs;
-
-          A1 = parseFloat(A1);
-          A2 = parseFloat(A2);
-          A3 = parseFloat(A3);
-          A4 = parseFloat(A4);
-          A5 = parseFloat(A5);
-          A6 = parseFloat(A6);
-
-          B1 = parseFloat(A1);
-          B2 = parseFloat(B2);
-          B3 = parseFloat(B3);
-          B4 = parseFloat(B4);
-          B5 = parseFloat(B5);
-          B6 = parseFloat(B6);
+          let { A1, A2, A3, A4, A5, A6, B1, B2, B3, B4, B5, B6 } = this;
 
           let ux =
             A1 + A2 * xx + A3 * yy + A4 * xx * xx + A5 * yy * yy + A6 * xx * yy;
