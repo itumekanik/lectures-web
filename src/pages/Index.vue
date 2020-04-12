@@ -5,21 +5,14 @@
         <!-- <div class="text-h6">Displacement Field</div> -->
         <div class="row bg-grey-1" style="min-height: 500px; width: 98%;">
           <div
-            id="parent"
             class="fit row wrap justify-center items-start content-start"
             style="overflow: hidden;"
           >
-            <div class="bg-grey-1 col-md-6 q-pa-md" style="overflow: auto;">
+            <div class="bg-grey-1 col-md-6 self-center q-pa-md" style="overflow: auto;">
               <q-btn label="SET ZERO" @click="SET_ZERO" color="secondary" />
+              <vue-mathjax class="q-mt-xs" :formula="formula_u"></vue-mathjax>
+              <vue-mathjax class="q-mt-xs" :formula="formula_v"></vue-mathjax>
               <div class="q-mt-xs">
-                u(X, Y) = A1 + A2 X + A3 Y + A4 X
-                <sup>2</sup> + A5 Y
-                <sup>2</sup> + A6 XY
-                <br />v(X, Y) = B1 + B2 X + B3 Y + B4 X
-                <sup>2</sup> + B5 Y
-                <sup>2</sup> + B6 XY
-                <br />
-
                 <q-markup-table class="q-mt-xs">
                   <thead>
                     <tr>
@@ -48,7 +41,7 @@
                 </q-markup-table>
               </div>
             </div>
-            <div class="bg-grey-1 col-grow self-center q-pa-md" style="overflow: auto;">
+            <div class="bg-grey-1 col-md-6 self-center q-pa-md" style="overflow: auto;">
               <div>
                 <q-btn
                   class="q-mr-xl"
@@ -62,7 +55,23 @@
                   :color="FINAL?'primary':'grey'"
                 >Final Configuration</q-btn>
               </div>
+
               <div class="q-mt-xs">
+
+                <q-card class="my-formula-card">
+                  <q-card-section>
+                    <vue-mathjax :formula="field_u" />
+                    <vue-mathjax :formula="field_v" />
+                  </q-card-section>
+                </q-card>
+
+                <!-- <vue-mathjax :formula="field_u" /> -->
+              </div>
+              <div class="q-mt-xs">
+                <!-- <vue-mathjax :formula="field_v" /> -->
+              </div>
+
+              <!-- <div class="q-mt-xs">
                 u(X, Y) =
                 <span v-if="A1">{{A1}}</span>
                 <span v-if="A2">+{{A2 | FORMAT}}X</span>
@@ -91,7 +100,7 @@
                   <sup>2</sup>
                 </span>
                 <span v-if="B6">+{{B6 | FORMAT}}XY</span>
-              </div>
+              </div> -->
               <div id="jxgbox" class="jxgbox col q-mt-xs" style="width:500px; min-height:400px"></div>
             </div>
           </div>
@@ -103,6 +112,7 @@
 
 <script>
 import JXG from "jsxgraph";
+import { VueMathjax } from "vue-mathjax";
 const points = [];
 const PF = val => {
   return val ? parseFloat(val) : 0;
@@ -110,9 +120,15 @@ const PF = val => {
 
 export default {
   name: "PageIndex",
+  components: {
+    "vue-mathjax": VueMathjax
+  },
   data() {
     return {
       state: "INITIAL",
+      formula_u: "$$u(X,Y)=A_{1}+A_{2}X+A_{3}Y+A_{4}X^2+A_{5}Y^2+A_{6}XY$$",
+      formula_v: "$$v(X,Y)=B_{1}+B_{2}X+B_{3}Y+B_{4}X^2+B_{5}Y^2+B_{6}XY$$",
+      // formula: "$$x = {-b \\pm \\sqrt{b^2-4ac} \\over 2a}.$$",
       coeffs: {
         A1: 4,
         A2: 0.3,
@@ -131,6 +147,12 @@ export default {
     };
   },
   computed: {
+    field_u() {
+      return `$$u(X,Y)=${this.A1}+${this.A2}X+${this.A3}Y+${this.A4}X^2+${this.A5}Y^2+${this.A6}XY$$`;
+    },
+    field_v() {
+      return `$$v(X,Y)=${this.B1}+${this.B2}X+${this.B3}Y+${this.B4}X^2+${this.B5}Y^2+${this.B6}XY$$`;
+    },
     INITIAL() {
       return this.state === "INITIAL";
     },
@@ -318,6 +340,13 @@ div {
     the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
     and <http://opensource.org/licenses/MIT/>.
  */
+
+ .my-formula-card{
+    display:block;
+    width:500px;
+    height:70px;
+    overflow:auto;
+    }
 
 .jxgbox {
   /* for IE 7 */
