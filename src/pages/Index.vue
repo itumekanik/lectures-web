@@ -167,6 +167,7 @@ export default {
       s += helper(s, this.A4, "X^2");
       s += helper(s, this.A5, "Y^2");
       s += helper(s, this.A6, "X Y");
+      s += s ? "" : "0";
       s += "$$";
       return "$$u(X,Y)=" + s;
     },
@@ -178,6 +179,7 @@ export default {
       s += helper(s, this.B4, "X^2");
       s += helper(s, this.B5, "Y^2");
       s += helper(s, this.B6, "X Y");
+      s += s ? "" : "0";
       s += "$$";
       return "$$v(X,Y)=" + s;
     },
