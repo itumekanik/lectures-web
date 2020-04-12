@@ -51,10 +51,22 @@ export default {
           link: "https://akademi.itu.edu.tr/en/yilmazmura/"
         },
         {
-          title: "Many thanks to Quasar Framework",
+          title: "Many thanks to Quasar",
           caption: "quasar.dev",
-          icon: "school",
+          icon: "3d_rotation",
           link: "https://quasar.dev"
+        },
+        {
+          title: "Many thanks to JSXGraph",
+          caption: "jsxgraph.uni",
+          icon: "video_label",
+          link: "https://jsxgraph.uni-bayreuth.de/wp/"
+        },
+        {
+          title: "Many thanks to MathJax",
+          caption: "mathjax.uni",
+          icon: "format_shapes",
+          link: "https://www.mathjax.org/"
         }
       ]
     };
