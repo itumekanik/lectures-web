@@ -1,23 +1,24 @@
 <template>
-  <q-layout view="hHh LpR fFf">
-
-    <q-header class="bg-primary text-white" height-hint="98">
+  <q-layout view="lHh Lpr lFf">
+    <q-header elevated>
       <q-toolbar>
-        <q-btn dense flat round icon="menu" @click="left = !left" />
+        <q-btn
+          flat
+          dense
+          round
+          icon="menu"
+          aria-label="Menu"
+          @click="leftDrawerOpen = !leftDrawerOpen"
+        />
 
-        <q-toolbar-title>
-          <!-- <q-avatar>
-            <img src="https://cdn.quasar.dev/logo/svg/quasar-logo.svg">
-          </q-avatar> -->
-          Finite Elements
-        </q-toolbar-title>
+        <q-toolbar-title>Finite Elements</q-toolbar-title>
+
+        <div>v{{ $q.version }}</div>
       </q-toolbar>
-
-
     </q-header>
 
-    <q-drawer v-model="left" side="left">
-       <q-list>
+    <q-drawer v-model="leftDrawerOpen"  bordered content-class="bg-grey-1">
+      <q-list>
         <q-item-label header class="text-grey-8">Essential Links</q-item-label>
         <EssentialLink v-for="link in essentialLinks" :key="link.title" v-bind="link" />
       </q-list>
@@ -26,7 +27,6 @@
     <q-page-container>
       <router-view />
     </q-page-container>
-
   </q-layout>
 </template>
 
@@ -42,7 +42,7 @@ export default {
 
   data() {
     return {
-      left: false,
+      leftDrawerOpen: false,
       essentialLinks: [
         {
           title: "Author",

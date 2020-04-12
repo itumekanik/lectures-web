@@ -1,96 +1,99 @@
 <template>
   <q-page class="flex my_page">
     <div class="page_container">
-      <div class="row">
-        <div class="col-xs-12 col-md-4 col-lg-4">
-          <div class="q-pa-xs">
-            <div class="col">
-              (Horizontal Displacement)
-              <br />u(X, Y) = A1 + A2 X + A3 Y + A4 X
-              <sup>2</sup> + A5 Y
-              <sup>2</sup> + A6 XY
-              <br />(Vertical Displacement)
-              <br />v(X, Y) = B1 + B2 X + B3 Y + B4 X
-              <sup>2</sup> + B5 Y
-              <sup>2</sup> + B6 XY
-              <br>
-              <q-btn label="SET ZERO" @click="SET_ZERO"/>
-              <q-markup-table>
-                <thead>
-                  <tr>
-                    <th class="text-left">i - Coeff</th>
-                    <th class="text-left">
-                      A
-                      <sub>i</sub>
-                    </th>
-                    <th class="text-left">
-                      B
-                      <sub>i</sub>
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="(i, index) in [1,2,3,4,5,6]" :key="index">
-                    <td class="text-left">({{i}}) {{str[i-1]}}</td>
-                    <td class="text-left">
-                      <input type="number" v-model="coeffs['A' + i]" />
-                    </td>
-                    <td class="text-left">
-                      <input type="number" v-model="coeffs['B' + i]" />
-                    </td>
-                  </tr>
-                </tbody>
-              </q-markup-table>
+      <div class="flex flex-center column">
+        <!-- <div class="text-h6">Displacement Field</div> -->
+        <div class="row bg-grey-1" style="min-height: 500px; width: 98%;">
+          <div
+            id="parent"
+            class="fit row wrap justify-center items-start content-start"
+            style="overflow: hidden;"
+          >
+            <div class="bg-grey-1 col-md-6 q-pa-md" style="overflow: auto;">
+              <q-btn label="SET ZERO" @click="SET_ZERO" color="secondary" />
+              <div class="q-mt-xs">
+                u(X, Y) = A1 + A2 X + A3 Y + A4 X
+                <sup>2</sup> + A5 Y
+                <sup>2</sup> + A6 XY
+                <br />v(X, Y) = B1 + B2 X + B3 Y + B4 X
+                <sup>2</sup> + B5 Y
+                <sup>2</sup> + B6 XY
+                <br />
+
+                <q-markup-table class="q-mt-xs">
+                  <thead>
+                    <tr>
+                      <th class="text-left">i - Coeff</th>
+                      <th class="text-left">
+                        A
+                        <sub>i</sub>
+                      </th>
+                      <th class="text-left">
+                        B
+                        <sub>i</sub>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="(i, index) in [1,2,3,4,5,6]" :key="index">
+                      <td class="text-left">({{i}}) {{str[i-1]}}</td>
+                      <td class="text-left">
+                        <input type="number" v-model="coeffs['A' + i]" />
+                      </td>
+                      <td class="text-left">
+                        <input type="number" v-model="coeffs['B' + i]" />
+                      </td>
+                    </tr>
+                  </tbody>
+                </q-markup-table>
+              </div>
             </div>
-          </div>
-        </div>
-        <div class="col-xs-12 col-md-8 col-lg-8">
-          <div class="q-pa-xs">
-            <div class="col">
-              <q-btn
-                @click="CLICK_INITIAL"
-                :disable="INITIAL"
-                :color="INITIAL?'primary':'grey'"
-              >Initial Configuration</q-btn>
-              <q-btn
-                @click="CLICK_FINAL"
-                :disable="FINAL"
-                :color="FINAL?'primary':'grey'"
-              >Final Configuration</q-btn>
+            <div class="bg-grey-1 col-grow self-center q-pa-md" style="overflow: auto;">
+              <div>
+                <q-btn
+                  class="q-mr-xl"
+                  @click="CLICK_INITIAL"
+                  :disable="INITIAL"
+                  :color="INITIAL?'primary':'grey'"
+                >Initial Configuration</q-btn>
+                <q-btn
+                  @click="CLICK_FINAL"
+                  :disable="FINAL"
+                  :color="FINAL?'primary':'grey'"
+                >Final Configuration</q-btn>
+              </div>
+              <div class="q-mt-xs">
+                u(X, Y) =
+                <span v-if="A1">{{A1}}</span>
+                <span v-if="A2">+{{A2 | FORMAT}}X</span>
+                <span v-if="A3">+{{A3 | FORMAT}}Y</span>
+                <span v-if="A4">
+                  +{{A4 | FORMAT}}X
+                  <sup>2</sup>
+                </span>
+                <span v-if="A5">
+                  +{{A5 | FORMAT}}Y
+                  <sup>2</sup>
+                </span>
+                <span v-if="A6">+{{A6 | FORMAT}}XY</span>
+              </div>
+              <div>
+                v(X, Y) =
+                <span v-if="B1">{{B1}}</span>
+                <span v-if="B2">+{{B2 | FORMAT}}X</span>
+                <span v-if="B3">+{{B3 | FORMAT}}Y</span>
+                <span v-if="B4">
+                  +{{B4 | FORMAT}}X
+                  <sup>2</sup>
+                </span>
+                <span v-if="B5">
+                  +{{B5 | FORMAT}}Y
+                  <sup>2</sup>
+                </span>
+                <span v-if="B6">+{{B6 | FORMAT}}XY</span>
+              </div>
+              <div id="jxgbox" class="jxgbox col q-mt-xs" style="width:500px; min-height:400px"></div>
             </div>
-          </div>
-          <div class="q-pa-xs">
-            <div>
-              u(X, Y) =
-              <span v-if="A1">{{A1}}</span>
-              <span v-if="A2">+{{A2 | FORMAT}}X</span>
-              <span v-if="A3">+{{A3 | FORMAT}}Y</span>
-              <span v-if="A4">
-                +{{A4 | FORMAT}}X
-                <sup>2</sup>
-              </span>
-              <span v-if="A5">
-                +{{A5 | FORMAT}}Y
-                <sup>2</sup>
-              </span>
-              <span v-if="A6">+{{A6 | FORMAT}}XY</span>
-            </div>
-            <div>
-              v(X, Y) =
-              <span v-if="B1">{{B1}}</span>
-              <span v-if="B2">+{{B2 | FORMAT}}X</span>
-              <span v-if="B3">+{{B3 | FORMAT}}Y</span>
-              <span v-if="B4">
-                +{{B4 | FORMAT}}X
-                <sup>2</sup>
-              </span>
-              <span v-if="B5">
-                +{{B5 | FORMAT}}Y
-                <sup>2</sup>
-              </span>
-              <span v-if="B6">+{{B6 | FORMAT}}XY</span>
-            </div>
-            <div id="jxgbox" class="jxgbox col" style="width:500px; height:300px"></div>
           </div>
         </div>
       </div>
@@ -208,8 +211,8 @@ export default {
   },
 
   methods: {
-    SET_ZERO () {
-      this.coeffs = {}
+    SET_ZERO() {
+      this.coeffs = {};
     },
     SET_INITIAL() {
       this.state = "INITIAL";
