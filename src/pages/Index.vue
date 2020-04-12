@@ -57,7 +57,6 @@
               </div>
 
               <div class="q-mt-xs">
-
                 <q-card class="my-formula-card">
                   <q-card-section>
                     <vue-mathjax :formula="field_u" />
@@ -100,7 +99,7 @@
                   <sup>2</sup>
                 </span>
                 <span v-if="B6">+{{B6 | FORMAT}}XY</span>
-              </div> -->
+              </div>-->
               <div id="jxgbox" class="jxgbox col q-mt-xs" style="width:500px; min-height:400px"></div>
             </div>
           </div>
@@ -116,6 +115,19 @@ import { VueMathjax } from "vue-mathjax";
 const points = [];
 const PF = val => {
   return val ? parseFloat(val) : 0;
+};
+
+const format = a => {
+  if (a == 1) return ``;
+  if (a == -1) return `-`;
+  return `${a}`;
+};
+
+const helper = (prev, current, txt) => {
+  if (current) {
+    return (current > 0 && prev ? "+" : "") + format(current) + txt;
+  }
+  return "";
 };
 
 export default {
@@ -148,10 +160,26 @@ export default {
   },
   computed: {
     field_u() {
-      return `$$u(X,Y)=${this.A1}+${this.A2}X+${this.A3}Y+${this.A4}X^2+${this.A5}Y^2+${this.A6}XY$$`;
+      let s = "";
+      if (this.A1) s += this.A1;
+      s += helper(s, this.A2, "X");
+      s += helper(s, this.A3, "Y");
+      s += helper(s, this.A4, "X^2");
+      s += helper(s, this.A5, "Y^2");
+      s += helper(s, this.A6, "X Y");
+      s += "$$";
+      return "$$u(X,Y)=" + s;
     },
     field_v() {
-      return `$$v(X,Y)=${this.B1}+${this.B2}X+${this.B3}Y+${this.B4}X^2+${this.B5}Y^2+${this.B6}XY$$`;
+      let s = "";
+      if (this.B1) s += this.B1;
+      s += helper(s, this.B2, "X");
+      s += helper(s, this.B3, "Y");
+      s += helper(s, this.B4, "X^2");
+      s += helper(s, this.B5, "Y^2");
+      s += helper(s, this.B6, "X Y");
+      s += "$$";
+      return "$$v(X,Y)=" + s;
     },
     INITIAL() {
       return this.state === "INITIAL";
@@ -341,12 +369,12 @@ div {
     and <http://opensource.org/licenses/MIT/>.
  */
 
- .my-formula-card{
-    display:block;
-    width:500px;
-    height:70px;
-    overflow:auto;
-    }
+.my-formula-card {
+  display: block;
+  width: 500px;
+  height: 70px;
+  overflow: auto;
+}
 
 .jxgbox {
   /* for IE 7 */
