@@ -31,10 +31,10 @@
                     <tr v-for="(i, index) in [1,2,3,4,5,6]" :key="index">
                       <td class="text-left">({{i}}) {{str[i-1]}}</td>
                       <td class="text-left">
-                        <input type="number" v-model="coeffs['A' + i]" />
+                        <input type="text" v-model="coeffs['A' + i]" />
                       </td>
                       <td class="text-left">
-                        <input type="number" v-model="coeffs['B' + i]" />
+                        <input type="text" v-model="coeffs['B' + i]" />
                       </td>
                     </tr>
                   </tbody>
@@ -56,51 +56,16 @@
                 >Final Configuration</q-btn>
               </div>
 
-              <div class="q-mt-xs">
+              <div class="q-mt-md">
                 <q-card class="my-formula-card">
                   <q-card-section>
                     <vue-mathjax :formula="field_u" />
                     <vue-mathjax :formula="field_v" />
                   </q-card-section>
                 </q-card>
-
-                <!-- <vue-mathjax :formula="field_u" /> -->
-              </div>
-              <div class="q-mt-xs">
-                <!-- <vue-mathjax :formula="field_v" /> -->
               </div>
 
-              <!-- <div class="q-mt-xs">
-                u(X, Y) =
-                <span v-if="A1">{{A1}}</span>
-                <span v-if="A2">+{{A2 | FORMAT}}X</span>
-                <span v-if="A3">+{{A3 | FORMAT}}Y</span>
-                <span v-if="A4">
-                  +{{A4 | FORMAT}}X
-                  <sup>2</sup>
-                </span>
-                <span v-if="A5">
-                  +{{A5 | FORMAT}}Y
-                  <sup>2</sup>
-                </span>
-                <span v-if="A6">+{{A6 | FORMAT}}XY</span>
-              </div>
-              <div>
-                v(X, Y) =
-                <span v-if="B1">{{B1}}</span>
-                <span v-if="B2">+{{B2 | FORMAT}}X</span>
-                <span v-if="B3">+{{B3 | FORMAT}}Y</span>
-                <span v-if="B4">
-                  +{{B4 | FORMAT}}X
-                  <sup>2</sup>
-                </span>
-                <span v-if="B5">
-                  +{{B5 | FORMAT}}Y
-                  <sup>2</sup>
-                </span>
-                <span v-if="B6">+{{B6 | FORMAT}}XY</span>
-              </div>-->
-              <div id="jxgbox" class="jxgbox col q-mt-xs" style="width:500px; min-height:400px"></div>
+              <div id="jxgbox" class="jxgbox col q-mt-md" style="width:500px; min-height:400px"></div>
             </div>
           </div>
         </div>
