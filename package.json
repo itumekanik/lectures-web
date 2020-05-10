@@ -12,15 +12,15 @@
     "test": "echo \"No test specified\" && exit 0"
   },
   "dependencies": {
-    "@quasar/extras": "^1.6.4",
+    "@quasar/extras": "^1.7.0",
     "axios": "^0.19.2",
     "jsxgraph": "^1.0.0",
-    "quasar": "^1.9.14",
-    "vue-i18n": "^8.17.0",
+    "quasar": "^1.10.5",
+    "vue-i18n": "^8.17.4",
     "vue-mathjax": "0.0.11"
   },
   "devDependencies": {
-    "@quasar/app": "^1.6.2",
+    "@quasar/app": "^1.8.5",
     "babel-eslint": "^10.0.1",
     "eslint": "^6.8.0",
     "eslint-config-airbnb-base": "^14.0.0",
