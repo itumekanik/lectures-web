@@ -3,12 +3,15 @@
     <div class="page_container">
       <div class="flex flex-center column">
         <!-- <div class="text-h6">Displacement Field</div> -->
-        <div class="row bg-grey-1" style="min-height: 500px; width: 98%;">
+        <div class="row bg-grey-1" style="min-height: 500px; width: 98%">
           <div
             class="fit row wrap justify-center items-start content-start"
-            style="overflow: hidden;"
+            style="overflow: hidden"
           >
-            <div class="bg-grey-1 col-md-6 self-center q-pa-md" style="overflow: auto;">
+            <div
+              class="bg-grey-1 col-md-6 self-center q-pa-md"
+              style="overflow: auto"
+            >
               <q-btn label="SET ZERO" @click="SET_ZERO" color="secondary" />
               <vue-mathjax class="q-mt-xs" :formula="formula_u"></vue-mathjax>
               <vue-mathjax class="q-mt-xs" :formula="formula_v"></vue-mathjax>
@@ -28,8 +31,8 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr v-for="(i, index) in [1,2,3,4,5,6]" :key="index">
-                      <td class="text-left">({{i}}) {{str[i-1]}}</td>
+                    <tr v-for="(i, index) in [1, 2, 3, 4, 5, 6]" :key="index">
+                      <td class="text-left">({{ i }}) {{ str[i - 1] }}</td>
                       <td class="text-left">
                         <input type="text" v-model="coeffs['A' + i]" />
                       </td>
@@ -41,19 +44,24 @@
                 </q-markup-table>
               </div>
             </div>
-            <div class="bg-grey-1 col-md-6 self-center q-pa-md" style="overflow: auto;">
+            <div
+              class="bg-grey-1 col-md-6 self-center q-pa-md"
+              style="overflow: auto"
+            >
               <div>
                 <q-btn
                   class="q-mr-xl"
                   @click="CLICK_INITIAL"
                   :disable="INITIAL"
-                  :color="INITIAL?'primary':'grey'"
-                >Initial Configuration</q-btn>
+                  :color="INITIAL ? 'primary' : 'grey'"
+                  >Initial Configuration</q-btn
+                >
                 <q-btn
                   @click="CLICK_FINAL"
                   :disable="FINAL"
-                  :color="FINAL?'primary':'grey'"
-                >Final Configuration</q-btn>
+                  :color="FINAL ? 'primary' : 'grey'"
+                  >Final Configuration</q-btn
+                >
               </div>
 
               <div class="q-mt-md">
@@ -65,7 +73,11 @@
                 </q-card>
               </div>
 
-              <div id="jxgbox" class="jxgbox col q-mt-md" style="width:500px; min-height:400px"></div>
+              <div
+                id="jxgbox"
+                class="jxgbox col q-mt-md"
+                style="width: 500px; min-height: 400px"
+              ></div>
             </div>
           </div>
         </div>
@@ -75,84 +87,83 @@
 </template>
 
 <script>
-import JXG from "jsxgraph";
-import { VueMathjax } from "vue-mathjax";
-const points = [];
-const PF = val => {
-  return val ? parseFloat(val) : 0;
-};
+import JXG from 'jsxgraph';
+import { VueMathjax } from 'vue-mathjax';
 
-const format = a => {
-  if (a == 1) return ``;
-  if (a == -1) return `-`;
+const points = [];
+const PF = (val) => (val ? parseFloat(val) : 0);
+
+const format = (a) => {
+  if (a == 1) return '';
+  if (a == -1) return '-';
   return `${a}`;
 };
 
 const helper = (prev, current, txt) => {
   if (current) {
-    return (current > 0 && prev ? "+" : "") + format(current) + txt;
+    return (current > 0 && prev ? '+' : '') + format(current) + txt;
   }
-  return "";
+  return '';
 };
 
 export default {
-  name: "PageIndex",
+  name: 'PageIndex',
   components: {
-    "vue-mathjax": VueMathjax
+    'vue-mathjax': VueMathjax,
   },
   data() {
     return {
-      state: "INITIAL",
-      formula_u: "$$u(X,Y)=A_{1}+A_{2}X+A_{3}Y+A_{4}X^2+A_{5}Y^2+A_{6}XY$$",
-      formula_v: "$$v(X,Y)=B_{1}+B_{2}X+B_{3}Y+B_{4}X^2+B_{5}Y^2+B_{6}XY$$",
+      state: 'INITIAL',
+      formula_u: '$$u(X,Y)=A_{1}+A_{2}X+A_{3}Y+A_{4}X^2+A_{5}Y^2+A_{6}XY$$',
+      formula_v: '$$v(X,Y)=B_{1}+B_{2}X+B_{3}Y+B_{4}X^2+B_{5}Y^2+B_{6}XY$$',
       // formula: "$$x = {-b \\pm \\sqrt{b^2-4ac} \\over 2a}.$$",
       coeffs: {
-        A1: 4,
-        A2: 0.3,
-        A3: 0.2,
+        A1: 0.5,
+        A2: 0.2,
+        A3: 0.25,
         A4: 0,
         A5: 0,
         A6: 0,
-        B1: 2,
-        B2: 0.5,
+        B1: 0.25,
+        B2: -0.10,
         B3: 0,
-        B4: 0,
+        B4: 0.15,
         B5: 0,
-        B6: -0.02
+        B6: 0,
       },
-      str: ["Const", "X", "Y", "X^2", "Y^2", "X*Y"]
+      str: ['Const', 'X', 'Y', 'X^2', 'Y^2', 'X*Y'],
     };
   },
   computed: {
     field_u() {
-      let s = "";
+      let s = '';
       if (this.A1) s += this.A1;
-      s += helper(s, this.A2, "X");
-      s += helper(s, this.A3, "Y");
-      s += helper(s, this.A4, "X^2");
-      s += helper(s, this.A5, "Y^2");
-      s += helper(s, this.A6, "X Y");
-      s += s ? "" : "0";
-      s += "$$";
-      return "$$u(X,Y)=" + s;
+      s += helper(s, this.A2, 'X');
+      s += helper(s, this.A3, 'Y');
+      s += helper(s, this.A4, 'X^2');
+      s += helper(s, this.A5, 'Y^2');
+      s += helper(s, this.A6, 'X Y');
+      s += s ? '' : '0';
+      s += '$$';
+      return `$$u(X,Y)=${s}`;
     },
     field_v() {
-      let s = "";
+      let s = '';
       if (this.B1) s += this.B1;
-      s += helper(s, this.B2, "X");
-      s += helper(s, this.B3, "Y");
-      s += helper(s, this.B4, "X^2");
-      s += helper(s, this.B5, "Y^2");
-      s += helper(s, this.B6, "X Y");
-      s += s ? "" : "0";
-      s += "$$";
-      return "$$v(X,Y)=" + s;
+      s += helper(s, this.B2, 'X');
+      s += helper(s, this.B3, 'Y');
+      s += helper(s, this.B4, 'X^2');
+      s += helper(s, this.B5, 'Y^2');
+      s += helper(s, this.B6, 'X Y');
+      s += s ? '' : '0';
+      s += '$$';
+      return `$$v(X,Y)=${s}`;
     },
     INITIAL() {
-      return this.state === "INITIAL";
+      return this.state === 'INITIAL';
     },
     FINAL() {
-      return this.state === "FINAL";
+      return this.state === 'FINAL';
     },
     A1() {
       return PF(this.coeffs.A1);
@@ -189,7 +200,7 @@ export default {
     },
     B6() {
       return PF(this.coeffs.B6);
-    }
+    },
   },
 
   watch: {
@@ -197,27 +208,28 @@ export default {
       deep: true,
       handler(n) {
         this.SET_INITIAL();
-      }
-    }
+      },
+    },
   },
   mounted() {
-    var brd = JXG.JSXGraph.initBoard("jxgbox", {
-      boundingbox: [-5, 30, 30, -5],
+    const brd = JXG.JSXGraph.initBoard('jxgbox', {
+      boundingbox: [-0.5, 2.5, 1.0, -0.5],
       keepaspectratio: true,
-      axis: true
+      axis: true,
     });
 
-    for (let y = 0; y < 6; y += 1) {
-      for (let x = 0; x < 11; x += 1) {
+    for (let y = 0; y < 5; y += 1) {
+      for (let x = 0; x < 9; x += 1) {
         points.push(
-          brd.create("point", [2 * x, 2 * y], {
-            name: "",
-            face: "o",
-            size: 2,
-            strokeColor: "red",
+          brd.create('point', [2.5 * x * 0.1, 2.5 * y * 0.1], {
+            name: '',
+            face: 'o',
+            size: 1,
+            strokeColor: 'black',
+            fillColor: 'black',
             fillOpacity: 1,
-            strokeOpacity: 1
-          })
+            strokeOpacity: 1,
+          }),
         );
       }
     }
@@ -232,39 +244,39 @@ export default {
       this.coeffs = {};
     },
     SET_INITIAL() {
-      this.state = "INITIAL";
+      this.state = 'INITIAL';
       let k = 0;
-      for (let y = 0; y < 6; y += 1) {
-        for (let x = 0; x < 11; x += 1) {
-          points[k].moveTo([2 * x, 2 * y], 1);
+      for (let y = 0; y < 5; y += 1) {
+        for (let x = 0; x < 9; x += 1) {
+          points[k].moveTo([2.5 * x * 0.1, 2.5 * y * 0.1], 1);
           k += 1;
         }
       }
     },
     CLICK_INITIAL() {
-      this.state = "INITIAL";
+      this.state = 'INITIAL';
       let k = 0;
-      for (let y = 0; y < 6; y += 1) {
-        for (let x = 0; x < 11; x += 1) {
-          points[k].moveTo([2 * x, 2 * y], 1000);
+      for (let y = 0; y < 5; y += 1) {
+        for (let x = 0; x < 9; x += 1) {
+          points[k].moveTo([2.5 * x * 0.1, 2.5 * y * 0.1], 1000);
           k += 1;
         }
       }
     },
     CLICK_FINAL() {
-      this.state = "FINAL";
+      this.state = 'FINAL';
       let k = 0;
-      for (let y = 0; y < 6; y += 1) {
-        for (let x = 0; x < 11; x += 1) {
-          let xx = 2 * x;
-          let yy = 2 * y;
+      for (let y = 0; y < 5; y += 1) {
+        for (let x = 0; x < 9; x += 1) {
+          const xx = 2.5 * x * 0.1;
+          const yy = 2.5 * y * 0.1;
 
-          let { A1, A2, A3, A4, A5, A6, B1, B2, B3, B4, B5, B6 } = this;
+          const {
+            A1, A2, A3, A4, A5, A6, B1, B2, B3, B4, B5, B6,
+          } = this;
 
-          let ux =
-            A1 + A2 * xx + A3 * yy + A4 * xx * xx + A5 * yy * yy + A6 * xx * yy;
-          let uy =
-            B1 + B2 * xx + B3 * yy + B4 * xx * xx + B5 * yy * yy + B6 * xx * yy;
+          const ux = A1 + A2 * xx + A3 * yy + A4 * xx * xx + A5 * yy * yy + A6 * xx * yy;
+          const uy = B1 + B2 * xx + B3 * yy + B4 * xx * xx + B5 * yy * yy + B6 * xx * yy;
 
           // let ux = 4 + 0.3 * xx + 0.2 * yy;
           // let uy = 2 + 0.5*xx - 0.02 * xx * yy;
@@ -272,17 +284,17 @@ export default {
           k += 1;
         }
       }
-    }
+    },
   },
 
   filters: {
     FORMAT(val) {
       // Show in multiplier form 3 X
-      if (val == 1) return "";
-      if (val == -1) return "-";
+      if (val == 1) return '';
+      if (val == -1) return '-';
       return val;
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -387,8 +399,8 @@ div {
   border-color: black;
 }
 
-/* 
-    CSS attributes will (permantely) overwrite attributes set in JSXGraph 
+/*
+    CSS attributes will (permantely) overwrite attributes set in JSXGraph
 */
 .JXGimage {
   /* opacity: 1.0; */
@@ -399,7 +411,7 @@ div {
 }
 
 /*
-    CSS rules for the navigation bar 
+    CSS rules for the navigation bar
 */
 
 .JXG_navigation {
@@ -428,8 +440,8 @@ div {
   background-color: rgba(184, 184, 184, 0.5);
 }
 
-/* 
-    CSS rules for the wrapping div in fullscreen mode 
+/*
+    CSS rules for the wrapping div in fullscreen mode
 */
 
 .JXG_wrap_private:-moz-full-screen {
