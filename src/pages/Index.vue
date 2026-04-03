@@ -1,34 +1,27 @@
 <template>
   <q-page class="page-bg">
 
-    <!-- Page title bar -->
-    <div class="page-title-bar q-px-lg q-py-md row items-center">
-      <div class="col">
-        <div class="text-h6 text-weight-bold text-primary">Displacement Field</div>
-        <div class="text-caption text-grey-6">
-          u(X,Y) and v(X,Y) polynomial displacement functions
+    <!-- Page title bar with formulas -->
+    <div class="page-title-bar q-px-lg q-py-sm row items-center no-wrap">
+      <div class="col-auto q-mr-lg">
+        <div class="text-subtitle1 text-weight-bold text-primary">Displacement Field</div>
+        <div class="text-caption text-grey-5">polynomial functions</div>
+      </div>
+      <q-separator vertical class="q-mr-lg" />
+      <div class="col row items-center q-gutter-x-md no-wrap">
+        <div class="row items-center no-wrap">
+          <q-badge color="primary" class="q-mr-sm badge-label">u</q-badge>
+          <vue-mathjax :formula="formula_u" />
+        </div>
+        <div class="row items-center no-wrap">
+          <q-badge color="secondary" class="q-mr-sm badge-label">v</q-badge>
+          <vue-mathjax :formula="formula_v" />
         </div>
       </div>
     </div>
 
-    <!-- General formulas banner -->
-    <div class="q-px-lg q-pb-md">
-      <q-card flat class="formula-banner">
-        <q-card-section class="q-pa-md">
-          <div class="row items-center q-mb-xs">
-            <q-badge color="primary" class="q-mr-sm" style="font-size: 11px">u</q-badge>
-            <vue-mathjax :formula="formula_u" />
-          </div>
-          <div class="row items-center">
-            <q-badge color="secondary" class="q-mr-sm" style="font-size: 11px">v</q-badge>
-            <vue-mathjax :formula="formula_v" />
-          </div>
-        </q-card-section>
-      </q-card>
-    </div>
-
     <!-- Main content -->
-    <div class="row q-px-lg q-pb-lg q-col-gutter-md">
+    <div class="row q-px-lg q-pt-md q-pb-lg q-col-gutter-md">
 
       <!-- Left: Coefficients -->
       <div class="col-12 col-md-5">
@@ -361,13 +354,14 @@ export default {
 .page-title-bar {
   border-bottom: 1px solid #e0e6f0;
   background: #fff;
+  min-height: 52px;
+  overflow-x: auto;
 }
 
-/* Formula banner */
-.formula-banner {
-  background: linear-gradient(135deg, #EEF2FF 0%, #F0FBF9 100%);
-  border: 1px solid #C5D8FF;
-  border-radius: 10px;
+.badge-label {
+  font-size: 11px;
+  min-width: 20px;
+  text-align: center;
 }
 
 /* Section headers */
