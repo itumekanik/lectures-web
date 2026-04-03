@@ -106,51 +106,36 @@
       <div class="col-12 col-md-7">
         <q-card class="viz-card">
 
-          <div class="section-header section-header--secondary row items-center">
-            <q-icon name="scatter_plot" size="18px" class="q-mr-xs" />
-            <span>Visualization</span>
-            <q-space />
-            <div class="state-toggle-group">
-              <q-btn
-                dense
-                flat
-                icon="grid_on"
-                label="Initial"
-                :class="INITIAL ? 'state-btn-active' : 'state-btn'"
-                size="sm"
-                @click="CLICK_INITIAL"
-              />
-              <q-btn
-                dense
-                flat
-                icon="blur_on"
-                label="Deformed"
-                :class="FINAL ? 'state-btn-active' : 'state-btn'"
-                size="sm"
-                @click="CLICK_FINAL"
-              />
+          <div class="section-header--secondary">
+            <div class="row items-center q-px-md q-py-xs">
+              <q-icon name="scatter_plot" size="18px" class="q-mr-xs text-white" />
+              <span class="text-white text-weight-semibold" style="font-size:13px">Visualization</span>
+              <q-space />
+              <div class="state-toggle-group">
+                <q-btn
+                  dense flat icon="grid_on" label="Initial"
+                  :class="INITIAL ? 'state-btn-active' : 'state-btn'"
+                  size="sm" @click="CLICK_INITIAL"
+                />
+                <q-btn
+                  dense flat icon="blur_on" label="Deformed"
+                  :class="FINAL ? 'state-btn-active' : 'state-btn'"
+                  size="sm" @click="CLICK_FINAL"
+                />
+              </div>
             </div>
-          </div>
-
-          <!-- Current field formulas (live) -->
-          <q-card-section class="q-pa-sm q-pb-xs">
-            <div class="result-formula-box">
-              <div class="row items-center q-mb-xs">
-                <q-badge
-                  color="primary"
-                  class="q-mr-sm result-badge"
-                >u =</q-badge>
+            <!-- Live formulas strip -->
+            <div class="formula-strip row items-center q-px-md q-py-xs no-wrap">
+              <div class="row items-center no-wrap q-mr-md">
+                <q-badge color="primary" class="q-mr-xs result-badge">u</q-badge>
                 <vue-mathjax :formula="field_u" />
               </div>
-              <div class="row items-center">
-                <q-badge
-                  color="secondary"
-                  class="q-mr-sm result-badge"
-                >v =</q-badge>
+              <div class="row items-center no-wrap">
+                <q-badge color="secondary" class="q-mr-xs result-badge">v</q-badge>
                 <vue-mathjax :formula="field_v" />
               </div>
             </div>
-          </q-card-section>
+          </div>
 
           <!-- JSXGraph board -->
           <q-card-section class="q-pa-md q-pt-sm">
@@ -380,6 +365,14 @@ export default {
 }
 .section-header--secondary {
   background: linear-gradient(90deg, #00695C, #00897B);
+  border-radius: 8px 8px 0 0;
+}
+
+.formula-strip {
+  background: #E8F5E9;
+  border-top: 1px solid rgba(0,0,0,0.1);
+  font-size: 12px;
+  overflow-x: auto;
 }
 
 /* Cards */
@@ -451,13 +444,6 @@ export default {
   font-size: 11px;
 }
 
-/* Live result formulas */
-.result-formula-box {
-  background: #F8FEFF;
-  border: 1px solid #B2DFDB;
-  border-radius: 8px;
-  padding: 10px 14px;
-}
 .result-badge {
   font-size: 11px;
   min-width: 28px;
