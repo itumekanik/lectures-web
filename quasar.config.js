@@ -25,6 +25,7 @@ module.exports = configure(function (/* ctx */) {
       },
       vueRouterMode: 'hash',
       distDir: 'docs',
+      publicPath: '/lectures-web/',
     },
 
     devServer: {
