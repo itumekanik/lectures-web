@@ -1,86 +1,138 @@
 <template>
-  <q-page class="flex my_page">
+  <q-page class="my_page">
     <div class="page_container">
-      <div class="flex flex-center column">
-        <!-- <div class="text-h6">Displacement Field</div> -->
-        <div class="row bg-grey-1" style="min-height: 500px; width: 98%">
-          <div
-            class="fit row wrap justify-center items-start content-start"
-            style="overflow: hidden"
-          >
-            <div
-              class="bg-grey-1 col-md-6 self-center q-pa-md"
-              style="overflow: auto"
-            >
-              <q-btn label="SET ZERO" @click="SET_ZERO" color="secondary" />
-              <vue-mathjax class="q-mt-xs" :formula="formula_u"></vue-mathjax>
-              <vue-mathjax class="q-mt-xs" :formula="formula_v"></vue-mathjax>
-              <div class="q-mt-xs">
-                <q-markup-table class="q-mt-xs">
-                  <thead>
-                    <tr>
-                      <th class="text-left">i - Coeff</th>
-                      <th class="text-left">
-                        A
-                        <sub>i</sub>
-                      </th>
-                      <th class="text-left">
-                        B
-                        <sub>i</sub>
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr v-for="(i, index) in [1, 2, 3, 4, 5, 6]" :key="index">
-                      <td class="text-left">({{ i }}) {{ str[i - 1] }}</td>
-                      <td class="text-left">
-                        <input type="text" v-model="coeffs['A' + i]" />
-                      </td>
-                      <td class="text-left">
-                        <input type="text" v-model="coeffs['B' + i]" />
-                      </td>
-                    </tr>
-                  </tbody>
-                </q-markup-table>
-              </div>
-            </div>
-            <div
-              class="bg-grey-1 col-md-6 self-center q-pa-md"
-              style="overflow: auto"
-            >
-              <div>
+
+      <div class="text-h5 text-weight-medium text-primary q-pa-md q-pb-none">
+        Displacement Field
+      </div>
+      <div class="text-caption text-grey-6 q-px-md q-pb-sm">
+        u(X,Y) and v(X,Y) polynomial displacement functions
+      </div>
+
+      <div class="row q-pa-md q-col-gutter-md">
+
+        <!-- Left: Coefficients -->
+        <div class="col-12 col-md-6">
+          <q-card flat bordered class="full-height">
+            <q-card-section class="q-pb-xs">
+              <div class="text-subtitle2 text-grey-7 q-mb-sm">Coefficients</div>
+              <vue-mathjax :formula="formula_u" />
+              <vue-mathjax :formula="formula_v" />
+            </q-card-section>
+
+            <q-card-section class="q-pt-xs">
+              <q-markup-table flat dense>
+                <thead>
+                  <tr>
+                    <th class="text-left text-grey-7">Term</th>
+                    <th class="text-center text-primary">A<sub>i</sub></th>
+                    <th class="text-center text-secondary">B<sub>i</sub></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(i, index) in [1, 2, 3, 4, 5, 6]" :key="index">
+                    <td class="text-left">
+                      <vue-mathjax :formula="termLabels[index]" />
+                    </td>
+                    <td class="text-center">
+                      <q-input
+                        v-model.number="coeffs['A' + i]"
+                        type="number"
+                        dense
+                        outlined
+                        input-class="text-center"
+                        style="min-width: 80px"
+                        :step="0.05"
+                      />
+                    </td>
+                    <td class="text-center">
+                      <q-input
+                        v-model.number="coeffs['B' + i]"
+                        type="number"
+                        dense
+                        outlined
+                        input-class="text-center"
+                        style="min-width: 80px"
+                        :step="0.05"
+                      />
+                    </td>
+                  </tr>
+                </tbody>
+              </q-markup-table>
+            </q-card-section>
+
+            <q-card-actions class="q-px-md q-pb-md">
+              <q-btn
+                label="Reset to Zero"
+                @click="SET_ZERO"
+                color="negative"
+                outline
+                icon="restart_alt"
+                size="sm"
+              />
+            </q-card-actions>
+          </q-card>
+        </div>
+
+        <!-- Right: Visualization -->
+        <div class="col-12 col-md-6">
+          <q-card flat bordered class="full-height">
+            <q-card-section class="q-pb-xs">
+              <div class="text-subtitle2 text-grey-7 q-mb-sm">Visualization</div>
+
+              <div class="row q-gutter-sm q-mb-sm">
                 <q-btn
-                  class="q-mr-xl"
                   @click="CLICK_INITIAL"
-                  :disable="INITIAL"
-                  :color="INITIAL ? 'primary' : 'grey'"
-                  >Initial Configuration</q-btn
-                >
+                  :color="INITIAL ? 'primary' : 'grey-4'"
+                  :text-color="INITIAL ? 'white' : 'grey-8'"
+                  :unelevated="INITIAL"
+                  :outline="!INITIAL"
+                  icon="grid_on"
+                  label="Initial"
+                  size="sm"
+                />
                 <q-btn
                   @click="CLICK_FINAL"
-                  :disable="FINAL"
-                  :color="FINAL ? 'primary' : 'grey'"
-                  >Final Configuration</q-btn
+                  :color="FINAL ? 'secondary' : 'grey-4'"
+                  :text-color="FINAL ? 'white' : 'grey-8'"
+                  :unelevated="FINAL"
+                  :outline="!FINAL"
+                  icon="blur_on"
+                  label="Deformed"
+                  size="sm"
+                />
+                <q-space />
+                <q-btn
+                  @click="CLICK_FINAL"
+                  flat
+                  round
+                  dense
+                  icon="refresh"
+                  color="grey-6"
+                  size="sm"
                 >
+                  <q-tooltip>Re-apply deformation</q-tooltip>
+                </q-btn>
               </div>
 
-              <div class="q-mt-md">
-                <q-card class="my-formula-card">
-                  <q-card-section>
-                    <vue-mathjax :formula="field_u" />
-                    <vue-mathjax :formula="field_v" />
-                  </q-card-section>
-                </q-card>
-              </div>
+              <q-card flat bordered class="formula-card q-mb-sm">
+                <q-card-section class="q-pa-sm">
+                  <vue-mathjax :formula="field_u" />
+                  <vue-mathjax :formula="field_v" />
+                </q-card-section>
+              </q-card>
+            </q-card-section>
 
+            <q-card-section class="q-pt-xs">
               <div
                 id="jxgbox"
-                class="jxgbox col q-mt-md"
-                style="width: 500px; min-height: 400px"
+                class="jxgbox"
+                style="width: 100%; max-width: 500px; min-height: 400px"
               ></div>
-            </div>
-          </div>
+            </q-card-section>
+          </q-card>
         </div>
+
       </div>
     </div>
   </q-page>
@@ -88,10 +140,9 @@
 
 <script>
 import JXG from 'jsxgraph';
-import { VueMathjax } from 'vue-mathjax';
 
 const points = [];
-const PF = (val) => (val ? parseFloat(val) : 0);
+const PF = (val) => (val !== '' && val !== null && val !== undefined ? parseFloat(val) : 0);
 
 const format = (a) => {
   if (a == 1) return '';
@@ -108,15 +159,20 @@ const helper = (prev, current, txt) => {
 
 export default {
   name: 'PageIndex',
-  components: {
-    'vue-mathjax': VueMathjax,
-  },
+  components: {},
   data() {
     return {
       state: 'INITIAL',
       formula_u: '$$u(X,Y)=A_{1}+A_{2}X+A_{3}Y+A_{4}X^2+A_{5}Y^2+A_{6}XY$$',
       formula_v: '$$v(X,Y)=B_{1}+B_{2}X+B_{3}Y+B_{4}X^2+B_{5}Y^2+B_{6}XY$$',
-      // formula: "$$x = {-b \\pm \\sqrt{b^2-4ac} \\over 2a}.$$",
+      termLabels: [
+        '$$1$$',
+        '$$X$$',
+        '$$Y$$',
+        '$$X^2$$',
+        '$$Y^2$$',
+        '$$XY$$',
+      ],
       coeffs: {
         A1: 0.5,
         A2: 0.2,
@@ -131,7 +187,6 @@ export default {
         B5: 0,
         B6: -0.2,
       },
-      str: ['Const', 'X', 'Y', 'X^2', 'Y^2', 'X*Y'],
     };
   },
   computed: {
@@ -145,7 +200,7 @@ export default {
       s += helper(s, this.A6, 'X Y');
       s += s ? '' : '0';
       s += '$$';
-      return `$$u(X,Y)=${s}`;
+      return `$$u=${s}`;
     },
     field_v() {
       let s = '';
@@ -157,7 +212,7 @@ export default {
       s += helper(s, this.B6, 'X Y');
       s += s ? '' : '0';
       s += '$$';
-      return `$$v(X,Y)=${s}`;
+      return `$$v=${s}`;
     },
     INITIAL() {
       return this.state === 'INITIAL';
@@ -165,52 +220,29 @@ export default {
     FINAL() {
       return this.state === 'FINAL';
     },
-    A1() {
-      return PF(this.coeffs.A1);
-    },
-    A2() {
-      return PF(this.coeffs.A2);
-    },
-    A3() {
-      return PF(this.coeffs.A3);
-    },
-    A4() {
-      return PF(this.coeffs.A4);
-    },
-    A5() {
-      return PF(this.coeffs.A5);
-    },
-    A6() {
-      return PF(this.coeffs.A6);
-    },
-    B1() {
-      return PF(this.coeffs.B1);
-    },
-    B2() {
-      return PF(this.coeffs.B2);
-    },
-    B3() {
-      return PF(this.coeffs.B3);
-    },
-    B4() {
-      return PF(this.coeffs.B4);
-    },
-    B5() {
-      return PF(this.coeffs.B5);
-    },
-    B6() {
-      return PF(this.coeffs.B6);
-    },
+    A1() { return PF(this.coeffs.A1); },
+    A2() { return PF(this.coeffs.A2); },
+    A3() { return PF(this.coeffs.A3); },
+    A4() { return PF(this.coeffs.A4); },
+    A5() { return PF(this.coeffs.A5); },
+    A6() { return PF(this.coeffs.A6); },
+    B1() { return PF(this.coeffs.B1); },
+    B2() { return PF(this.coeffs.B2); },
+    B3() { return PF(this.coeffs.B3); },
+    B4() { return PF(this.coeffs.B4); },
+    B5() { return PF(this.coeffs.B5); },
+    B6() { return PF(this.coeffs.B6); },
   },
 
   watch: {
     coeffs: {
       deep: true,
-      handler(n) {
+      handler() {
         this.SET_INITIAL();
       },
     },
   },
+
   mounted() {
     const brd = JXG.JSXGraph.initBoard('jxgbox', {
       boundingbox: [-0.5, 2.5, 1.0, -0.5],
@@ -241,7 +273,9 @@ export default {
 
   methods: {
     SET_ZERO() {
-      this.coeffs = {};
+      Object.keys(this.coeffs).forEach((k) => {
+        this.coeffs[k] = 0;
+      });
     },
     SET_INITIAL() {
       this.state = 'INITIAL';
@@ -270,29 +304,15 @@ export default {
         for (let x = 0; x < 9; x += 1) {
           const xx = 2.5 * x * 0.1;
           const yy = 2.5 * y * 0.1;
-
           const {
             A1, A2, A3, A4, A5, A6, B1, B2, B3, B4, B5, B6,
           } = this;
-
           const ux = A1 + A2 * xx + A3 * yy + A4 * xx * xx + A5 * yy * yy + A6 * xx * yy;
           const uy = B1 + B2 * xx + B3 * yy + B4 * xx * xx + B5 * yy * yy + B6 * xx * yy;
-
-          // let ux = 4 + 0.3 * xx + 0.2 * yy;
-          // let uy = 2 + 0.5*xx - 0.02 * xx * yy;
           points[k].moveTo([xx + ux, yy + uy], 1000);
           k += 1;
         }
       }
-    },
-  },
-
-  filters: {
-    FORMAT(val) {
-      // Show in multiplier form 3 X
-      if (val == 1) return '';
-      if (val == -1) return '-';
-      return val;
     },
   },
 };
@@ -300,63 +320,21 @@ export default {
 
 <style lang="stylus" scoped>
 .my_page {
-  background-color: $grey-1;
+  background-color: $grey-2;
 }
 
 .page_container {
   width: 100%;
 }
-
-div {
-  /* border: 1px solid blue; */
-}
-
-.row {
-  margin: 5px;
-}
 </style>
 
 <style scoped>
-/*
-    Copyright 2008-2016
-        Matthias Ehmann,
-        Michael Gerhaeuser,
-        Carsten Miller,
-        Bianca Valentin,
-        Alfred Wassermann,
-        Peter Wilfahrt
-
-    This file is part of JSXGraph.
-
-    JSXGraph is free software dual licensed under the GNU LGPL or MIT License.
-
-    You can redistribute it and/or modify it under the terms of the
-
-      * GNU Lesser General Public License as published by
-        the Free Software Foundation, either version 3 of the License, or
-        (at your option) any later version
-      OR
-      * MIT License: https://github.com/jsxgraph/jsxgraph/blob/master/LICENSE.MIT
-
-    JSXGraph is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
-    and <http://opensource.org/licenses/MIT/>.
- */
-
-.my-formula-card {
-  display: block;
-  width: 500px;
-  height: 70px;
+.formula-card {
+  min-height: 60px;
   overflow: auto;
 }
 
 .jxgbox {
-  /* for IE 7 */
   position: relative;
   overflow: hidden;
   background-color: #ffffff;
@@ -366,7 +344,6 @@ div {
   border-radius: 10px;
   -webkit-border-radius: 10px;
   -ms-touch-action: none;
-  /* touch-action: none; */ /* Set with JavaScript */
 }
 
 .jxgbox svg text {
@@ -379,15 +356,6 @@ div {
 
 .JXGtext {
   font-family: Courier, monospace;
-  /**
-     * The default font family is now set in
-     * JXG.Options.text.cssdefaultstyle = 'font-family: Arial, Helvetica, Geneva, sans-serif;'
-     */
-  /*
-        font-family: Arial, Helvetica, Geneva, sans-serif;
-    */
-
-  /* "background-color: transparent;" may produce artefacts in IE. Solution: setting a color explicitly. */
   background-color: transparent;
   padding: 0;
   margin: 0;
@@ -399,35 +367,15 @@ div {
   border-color: black;
 }
 
-/*
-    CSS attributes will (permantely) overwrite attributes set in JSXGraph
-*/
-.JXGimage {
-  /* opacity: 1.0; */
-}
-
-.JXGimageHighlight {
-  /* opacity: 0.6; */
-}
-
-/*
-    CSS rules for the navigation bar
-*/
-
 .JXG_navigation {
   position: absolute;
   right: 5px;
   bottom: 5px;
-
   z-index: 100;
-
   background-color: transparent;
   padding: 2px;
   font-size: 14px;
   cursor: pointer;
-}
-
-.JXG_navigation:hover {
 }
 
 .JXG_navigation_button {
@@ -436,39 +384,11 @@ div {
 
 .JXG_navigation_button:hover {
   border-radius: 2px;
-  background-color: #c0c0c0;
   background-color: rgba(184, 184, 184, 0.5);
 }
 
-/*
-    CSS rules for the wrapping div in fullscreen mode
-*/
-
-.JXG_wrap_private:-moz-full-screen {
-  background-color: #cccccc;
-  padding: 0px;
-  width: 100%;
-  height: 100%;
-}
-
-.JXG_wrap_private:-webkit-full-screen {
-  background-color: #cccccc;
-  padding: 0px;
-  width: 100%;
-  height: 100%;
-}
-
-.JXG_wrap_private:fullscreen {
-  background-color: #cccccc;
-  padding: 0px;
-  width: 100%;
-  height: 100%;
-}
-
-.JXG_wrap_private:-ms-fullscreen {
-  background-color: #cccccc;
-  padding: 0px;
-  width: 100%;
-  height: 100%;
-}
+.JXG_wrap_private:-moz-full-screen { background-color: #cccccc; padding: 0; width: 100%; height: 100%; }
+.JXG_wrap_private:-webkit-full-screen { background-color: #cccccc; padding: 0; width: 100%; height: 100%; }
+.JXG_wrap_private:fullscreen { background-color: #cccccc; padding: 0; width: 100%; height: 100%; }
+.JXG_wrap_private:-ms-fullscreen { background-color: #cccccc; padding: 0; width: 100%; height: 100%; }
 </style>

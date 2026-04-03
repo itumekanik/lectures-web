@@ -3,46 +3,44 @@
   "version": "0.0.1",
   "description": "Helper pages for my Lectures",
   "productName": "Lectures",
-  "cordovaId": "org.cordova.quasar.app",
-  "capacitorId": "",
   "author": "Murat <sapedit@hotmail.com>",
   "private": true,
   "scripts": {
-    "dev": "set NODE_OPTIONS=--openssl-legacy-provider && quasar dev",
-    "build": "set NODE_OPTIONS=--openssl-legacy-provider && quasar build",
+    "dev": "quasar dev",
+    "build": "quasar build",
     "lint": "eslint --ext .js,.vue src",
     "test": "echo \"No test specified\" && exit 0"
   },
   "dependencies": {
-    "@quasar/extras": "^1.7.0",
-    "axios": "^0.19.2",
-    "jsxgraph": "^1.0.0",
-    "quasar": "^1.10.5",
-    "vue-i18n": "^8.17.4",
-    "vue-mathjax": "0.0.11"
+    "@quasar/extras": "^1.16.4",
+    "axios": "^1.6.8",
+    "jsxgraph": "^1.6.0",
+    "quasar": "^2.14.0",
+    "vue": "^3.4.21",
+    "vue-i18n": "^9.10.0",
+    "vue-router": "^4.3.0",
+    "vuex": "^4.1.0"
   },
   "devDependencies": {
-    "@quasar/app": "^1.8.5",
-    "babel-eslint": "^10.0.1",
-    "eslint": "^6.8.0",
-    "eslint-config-airbnb-base": "^14.0.0",
-    "eslint-loader": "^3.0.4",
-    "eslint-plugin-import": "^2.20.2",
-    "eslint-plugin-vue": "^6.1.2",
-    "sass": "^1.77.0"
-  },
-  "overrides": {
-    "node-sass": "npm:sass@^1.77.0"
+    "@babel/eslint-parser": "^7.23.0",
+    "@quasar/app-vite": "^1.9.0",
+    "eslint": "^8.57.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.29.0",
+    "eslint-plugin-vue": "^9.21.0",
+    "sass": "^1.77.0",
+    "stylus": "^0.64.0",
+    "vite-plugin-checker": "^0.6.4"
   },
   "engines": {
-    "node": ">= 10.18.1",
+    "node": "^22 || ^20 || ^18",
     "npm": ">= 6.13.4",
     "yarn": ">= 1.21.1"
   },
   "browserslist": [
-    "last 1 version, not dead, ie >= 11"
-  ],
-  "resolutions": {
-    "@babel/parser": "7.7.5"
-  }
+    "last 2 Chrome versions",
+    "last 2 Firefox versions",
+    "last 2 Safari versions",
+    "last 2 Edge versions"
+  ]
 }

@@ -1,3 +1,35 @@
-import Vue from "vue";
-import VueMathjax from "vue-mathjax";
-Vue.use(VueMathjax);
+import { boot } from 'quasar/wrappers';
+import { defineComponent, h } from 'vue';
+
+const MathFormulaComponent = defineComponent({
+  name: 'vue-mathjax',
+  props: {
+    formula: {
+      type: String,
+      required: true,
+    },
+  },
+  render() {
+    return h('div', this.formula);
+  },
+  mounted() {
+    this.typeset();
+  },
+  watch: {
+    formula(val) {
+      this.$el.textContent = val;
+      this.typeset();
+    },
+  },
+  methods: {
+    typeset() {
+      if (window.MathJax && window.MathJax.typesetPromise) {
+        window.MathJax.typesetPromise([this.$el]);
+      }
+    },
+  },
+});
+
+export default boot(({ app }) => {
+  app.component('vue-mathjax', MathFormulaComponent);
+});
