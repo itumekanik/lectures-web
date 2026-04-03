@@ -70,15 +70,14 @@ module.exports = function (ctx) {
 
       // https://quasar.dev/quasar-cli/cli-documentation/handling-webpack
       extendWebpack (cfg) {
-        // cfg.module.rules.push({
-        //   enforce: 'pre',
-        //   test: /\.(js|vue)$/,
-        //   loader: 'eslint-loader',
-        //   exclude: /node_modules/,
-        //   options: {
-        //     formatter: require('eslint').CLIEngine.getFormatter('stylish')
-        //   }
-        // })
+      },
+
+      // Override node-sass-only outputStyle with Dart Sass compatible value
+      sassLoaderOptions: {
+        sassOptions: { outputStyle: 'expanded' }
+      },
+      scssLoaderOptions: {
+        sassOptions: { outputStyle: 'expanded' }
       }
     },
 

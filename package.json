@@ -8,6 +8,8 @@
   "author": "Murat <sapedit@hotmail.com>",
   "private": true,
   "scripts": {
+    "dev": "set NODE_OPTIONS=--openssl-legacy-provider && quasar dev",
+    "build": "set NODE_OPTIONS=--openssl-legacy-provider && quasar build",
     "lint": "eslint --ext .js,.vue src",
     "test": "echo \"No test specified\" && exit 0"
   },
@@ -26,7 +28,11 @@
     "eslint-config-airbnb-base": "^14.0.0",
     "eslint-loader": "^3.0.4",
     "eslint-plugin-import": "^2.20.2",
-    "eslint-plugin-vue": "^6.1.2"
+    "eslint-plugin-vue": "^6.1.2",
+    "sass": "^1.77.0"
+  },
+  "overrides": {
+    "node-sass": "npm:sass@^1.77.0"
   },
   "engines": {
     "node": ">= 10.18.1",
