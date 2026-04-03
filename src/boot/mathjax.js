@@ -25,6 +25,12 @@ const MathFormulaComponent = defineComponent({
     typeset() {
       if (window.MathJax && window.MathJax.typesetPromise) {
         window.MathJax.typesetPromise([this.$el]);
+      } else {
+        window.addEventListener('mathjax-ready', () => {
+          if (this.$el) {
+            window.MathJax.typesetPromise([this.$el]);
+          }
+        }, { once: true });
       }
     },
   },

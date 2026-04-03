@@ -24,7 +24,11 @@
           skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
         },
         startup: {
-          typeset: false
+          typeset: false,
+          ready() {
+            MathJax.startup.defaultReady();
+            window.dispatchEvent(new Event('mathjax-ready'));
+          }
         }
       };
     </script>
