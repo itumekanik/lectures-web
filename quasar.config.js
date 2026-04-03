@@ -24,6 +24,7 @@ module.exports = configure(function (/* ctx */) {
         node: 'node20',
       },
       vueRouterMode: 'hash',
+      distDir: 'docs',
     },
 
     devServer: {
