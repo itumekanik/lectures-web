@@ -139,10 +139,7 @@
 
           <!-- JSXGraph board -->
           <q-card-section class="q-pa-md q-pt-sm">
-            <div
-              id="jxgbox"
-              class="jxgbox"
-            ></div>
+            <div id="jxgbox" class="jxgbox"></div>
           </q-card-section>
 
         </q-card>
@@ -158,13 +155,17 @@
           <div class="section-header section-header--strain">
             <q-icon name="grid_3x3" size="18px" class="q-mr-xs" />
             Infinitesimal Strain Tensor — Point P
+            <q-space />
+            <span style="font-size:11px; opacity:0.85">
+              dashed cross = reference &nbsp;|&nbsp; solid cross = deformed
+            </span>
           </div>
 
           <q-card-section class="q-pa-md">
             <div class="row q-col-gutter-md items-start">
 
               <!-- Column 1: Point & Direction -->
-              <div class="col-12 col-md-4">
+              <div class="col-12 col-md-3">
                 <div class="strain-section-label">Reference Point P</div>
                 <div class="row q-gutter-sm q-mb-xs">
                   <div class="col">
@@ -207,7 +208,7 @@
               </div>
 
               <!-- Column 2: Strain Tensor -->
-              <div class="col-12 col-md-4">
+              <div class="col-12 col-md-3">
                 <div class="strain-section-label text-center">Strain Tensor [ε]</div>
                 <div class="tensor-wrapper">
                   <div class="tensor-bracket-left"></div>
@@ -254,32 +255,108 @@
                 </div>
               </div>
 
-              <!-- Column 3: Normal & Shear Strain -->
-              <div class="col-12 col-md-4">
+              <!-- Column 3: Normal strains in n and s -->
+              <div class="col-12 col-md-3">
                 <div class="strain-section-label text-center">
-                  Strain in Direction θ = {{ directionAngle }}°
+                  Arm Lengths &amp; Normal Strains
                 </div>
 
-                <div class="normal-strain-box q-mb-sm">
-                  <div class="normal-strain-formula">
-                    ε<sub>n</sub> = ε<sub>xx</sub>cos²θ + 2ε<sub>xy</sub>cosθ sinθ + ε<sub>yy</sub>sin²θ
+                <!-- n-arm (blue) -->
+                <div class="arm-box arm-box--n q-mb-sm">
+                  <div class="arm-box-header">
+                    <span class="arm-dot arm-dot--n"></span>
+                    n-arm &nbsp;(θ = {{ directionAngle }}°)
                   </div>
-                  <div class="normal-strain-label">Normal strain</div>
-                  <div class="normal-strain-value">{{ eps_normal.toFixed(6) }}</div>
+                  <div class="arm-row">
+                    <span class="arm-key">stretch λ<sub>n</sub></span>
+                    <span class="arm-val">{{ stretchN.toFixed(6) }}</span>
+                  </div>
+                  <div class="arm-row">
+                    <span class="arm-key">ε<sub>n</sub> = λ−1</span>
+                    <span class="arm-val">{{ eps_normal.toFixed(6) }}</span>
+                  </div>
                 </div>
 
-                <div class="shear-strain-box q-mb-sm">
-                  <div class="shear-formula">
-                    γ<sub>ns</sub>/2 = (ε<sub>yy</sub>−ε<sub>xx</sub>)cosθ sinθ + ε<sub>xy</sub>(cos²θ−sin²θ)
+                <!-- s-arm (green) -->
+                <div class="arm-box arm-box--s q-mb-sm">
+                  <div class="arm-box-header">
+                    <span class="arm-dot arm-dot--s"></span>
+                    s-arm &nbsp;(θ+90° = {{ directionAngle + 90 }}°)
                   </div>
-                  <div class="shear-strain-label">Shear strain</div>
-                  <div class="shear-value">{{ eps_shear.toFixed(6) }}</div>
+                  <div class="arm-row">
+                    <span class="arm-key">stretch λ<sub>s</sub></span>
+                    <span class="arm-val">{{ stretchS.toFixed(6) }}</span>
+                  </div>
+                  <div class="arm-row">
+                    <span class="arm-key">ε<sub>s</sub> = λ−1</span>
+                    <span class="arm-val">{{ eps_normal_s.toFixed(6) }}</span>
+                  </div>
                 </div>
 
                 <div class="text-center">
                   <q-chip dense color="deep-orange-1" text-color="deep-orange-9" size="sm">
-                    Max shear: γ<sub>max</sub>/2 = {{ eps_max_shear.toFixed(5) }}
+                    Max shear &nbsp;γ<sub>max</sub>/2 = {{ eps_max_shear.toFixed(5) }}
                   </q-chip>
+                </div>
+              </div>
+
+              <!-- Column 4: Angle change (gamma) -->
+              <div class="col-12 col-md-3">
+                <div class="strain-section-label text-center">
+                  Angle Between Arms
+                </div>
+
+                <!-- Angle visual -->
+                <div class="angle-visual-box q-mb-sm">
+                  <div class="angle-arc-display">
+                    <svg viewBox="0 0 80 80" width="80" height="80">
+                      <!-- reference right-angle indicator -->
+                      <polyline
+                        points="50,40 40,40 40,30"
+                        fill="none" stroke="#ccc" stroke-width="1.5" stroke-dasharray="3,2"
+                      />
+                      <!-- deformed angle arc -->
+                      <path :d="svgArcPath" fill="rgba(230,74,25,0.15)" stroke="#E64A19" stroke-width="1.5" />
+                      <!-- n-arm (blue) -->
+                      <line x1="40" y1="40" :x2="40 + 30*Math.cos(-deformedAngleDeg * Math.PI / 180 / 2 + Math.PI/4)"
+                            :y2="40 - 30*Math.sin(-deformedAngleDeg * Math.PI / 180 / 2 + Math.PI/4)"
+                            stroke="#1565C0" stroke-width="2.5" />
+                      <!-- s-arm (green) -->
+                      <line x1="40" y1="40"
+                            :x2="40 + 30*Math.cos(deformedAngleDeg * Math.PI / 180 / 2 + Math.PI/4)"
+                            :y2="40 - 30*Math.sin(deformedAngleDeg * Math.PI / 180 / 2 + Math.PI/4)"
+                            stroke="#00897B" stroke-width="2.5" />
+                      <!-- angle label -->
+                      <text x="40" y="56" text-anchor="middle" font-size="10" fill="#E64A19" font-weight="bold">
+                        {{ deformedAngleDeg.toFixed(1) }}°
+                      </text>
+                    </svg>
+                  </div>
+                </div>
+
+                <div class="angle-info-box q-mb-xs">
+                  <div class="angle-info-row">
+                    <span class="angle-info-key">Reference angle</span>
+                    <span class="angle-info-val">90.000°</span>
+                  </div>
+                  <div class="angle-info-row">
+                    <span class="angle-info-key">Deformed angle</span>
+                    <span class="angle-info-val text-deep-orange">{{ deformedAngleDeg.toFixed(4) }}°</span>
+                  </div>
+                  <div class="angle-info-row">
+                    <span class="angle-info-key">Δ angle (= −γ<sub>ns</sub>·180/π)</span>
+                    <span class="angle-info-val" :class="gammaNsDeg >= 0 ? 'text-negative' : 'text-positive'">
+                      {{ (deformedAngleDeg - 90).toFixed(4) }}°
+                    </span>
+                  </div>
+                  <div class="angle-info-row">
+                    <span class="angle-info-key">γ<sub>ns</sub> (eng. shear)</span>
+                    <span class="angle-info-val text-deep-orange">{{ gammaNs.toFixed(6) }}</span>
+                  </div>
+                  <div class="angle-info-row">
+                    <span class="angle-info-key">2ε<sub>xy,θ</sub> (tensor×2)</span>
+                    <span class="angle-info-val text-grey-7">{{ (2 * eps_shear).toFixed(6) }}</span>
+                  </div>
                 </div>
               </div>
 
@@ -321,33 +398,21 @@ export default {
       formula_u: '$$u(X,Y)=A_{1}+A_{2}X+A_{3}Y+A_{4}X^2+A_{5}Y^2+A_{6}XY$$',
       formula_v: '$$v(X,Y)=B_{1}+B_{2}X+B_{3}Y+B_{4}X^2+B_{5}Y^2+B_{6}XY$$',
       termLabels: [
-        '$$1$$',
-        '$$X$$',
-        '$$Y$$',
-        '$$X^2$$',
-        '$$Y^2$$',
-        '$$XY$$',
+        '$$1$$', '$$X$$', '$$Y$$', '$$X^2$$', '$$Y^2$$', '$$XY$$',
       ],
       coeffs: {
-        A1: 0.5,
-        A2: 0.2,
-        A3: 0.25,
-        A4: 0,
-        A5: 0,
-        A6: 0,
-        B1: 0.25,
-        B2: -0.10,
-        B3: 0,
-        B4: 0.15,
-        B5: 0,
-        B6: -0.2,
+        A1: 0.5,  A2: 0.2,   A3: 0.25, A4: 0,
+        A5: 0,    A6: 0,
+        B1: 0.25, B2: -0.10, B3: 0,    B4: 0.15,
+        B5: 0,    B6: -0.2,
       },
-      // Strain analysis
       strainPointX: 0.5,
       strainPointY: 0.5,
       directionAngle: 0,
+      strainLen: 0.18,
     };
   },
+
   computed: {
     field_u() {
       let s = '';
@@ -388,69 +453,128 @@ export default {
     B5() { return PF(this.coeffs.B5); },
     B6() { return PF(this.coeffs.B6); },
 
-    // Strain tensor at point P
-    // u = A1 + A2*X + A3*Y + A4*X² + A5*Y² + A6*X*Y
-    // v = B1 + B2*X + B3*Y + B4*X² + B5*Y² + B6*X*Y
-    // εxx = ∂u/∂X = A2 + 2*A4*X + A6*Y
-    // εyy = ∂v/∂Y = B3 + 2*B5*Y + B6*X
-    // εxy = ½(∂u/∂Y + ∂v/∂X) = ½(A3 + 2*A5*Y + A6*X + B2 + 2*B4*X + B6*Y)
+    // Strain tensor components at P
+    // εxx = ∂u/∂X, εyy = ∂v/∂Y, εxy = ½(∂u/∂Y + ∂v/∂X)
     eps_xx() {
-      const X = this.strainPointX;
-      const Y = this.strainPointY;
+      const X = this.strainPointX; const Y = this.strainPointY;
       return this.A2 + 2 * this.A4 * X + this.A6 * Y;
     },
     eps_yy() {
-      const X = this.strainPointX;
-      const Y = this.strainPointY;
+      const X = this.strainPointX; const Y = this.strainPointY;
       return this.B3 + 2 * this.B5 * Y + this.B6 * X;
     },
     eps_xy() {
-      const X = this.strainPointX;
-      const Y = this.strainPointY;
+      const X = this.strainPointX; const Y = this.strainPointY;
       const dudy = this.A3 + 2 * this.A5 * Y + this.A6 * X;
       const dvdx = this.B2 + 2 * this.B4 * X + this.B6 * Y;
       return 0.5 * (dudy + dvdx);
     },
 
-    // Direction vector components
     nxDisplay() { return Math.cos(this.directionAngle * Math.PI / 180).toFixed(3); },
     nyDisplay() { return Math.sin(this.directionAngle * Math.PI / 180).toFixed(3); },
 
-    // Normal strain in direction n=(cosθ, sinθ)
-    // εn = εxx*cos²θ + 2*εxy*cosθ*sinθ + εyy*sin²θ
+    // Normal strain in n=(cosθ, sinθ): εn = εxx·cos²θ + 2εxy·cosθ·sinθ + εyy·sin²θ
     eps_normal() {
       const theta = this.directionAngle * Math.PI / 180;
-      const c = Math.cos(theta);
-      const s = Math.sin(theta);
+      const c = Math.cos(theta); const s = Math.sin(theta);
       return this.eps_xx * c * c + 2 * this.eps_xy * c * s + this.eps_yy * s * s;
     },
 
-    // Shear strain γns/2 in direction n, perpendicular s=(-sinθ, cosθ)
-    // γns/2 = (εyy - εxx)*cosθ*sinθ + εxy*(cos²θ - sin²θ)
+    // Normal strain in s=(-sinθ, cosθ): εs = εxx·sin²θ − 2εxy·cosθ·sinθ + εyy·cos²θ
+    eps_normal_s() {
+      const theta = this.directionAngle * Math.PI / 180;
+      const c = Math.cos(theta); const s = Math.sin(theta);
+      return this.eps_xx * s * s - 2 * this.eps_xy * c * s + this.eps_yy * c * c;
+    },
+
+    // Tensor shear component: γns/2 = (εyy−εxx)·cosθ·sinθ + εxy·(cos²θ−sin²θ)
     eps_shear() {
       const theta = this.directionAngle * Math.PI / 180;
-      const c = Math.cos(theta);
-      const s = Math.sin(theta);
+      const c = Math.cos(theta); const s = Math.sin(theta);
       return (this.eps_yy - this.eps_xx) * c * s + this.eps_xy * (c * c - s * s);
     },
 
-    // Principal strains: ε1,2 = (εxx+εyy)/2 ± R, R = √[((εxx-εyy)/2)² + εxy²]
+    // Principal strains
     eps_radius() {
       return Math.sqrt(((this.eps_xx - this.eps_yy) / 2) ** 2 + this.eps_xy ** 2);
     },
-    eps_principal_1() {
-      return (this.eps_xx + this.eps_yy) / 2 + this.eps_radius;
-    },
-    eps_principal_2() {
-      return (this.eps_xx + this.eps_yy) / 2 - this.eps_radius;
-    },
-    // Principal angle: θp = ½ arctan(2εxy / (εxx - εyy))
+    eps_principal_1() { return (this.eps_xx + this.eps_yy) / 2 + this.eps_radius; },
+    eps_principal_2() { return (this.eps_xx + this.eps_yy) / 2 - this.eps_radius; },
     eps_principal_angle() {
       return 0.5 * Math.atan2(2 * this.eps_xy, this.eps_xx - this.eps_yy) * 180 / Math.PI;
     },
-    // Max shear strain (half)
-    eps_max_shear() {
-      return this.eps_radius;
+    eps_max_shear() { return this.eps_radius; },
+
+    // Deformation gradient helpers at P
+    _F() {
+      const X = this.strainPointX; const Y = this.strainPointY;
+      return {
+        dudx: this.A2 + 2 * this.A4 * X + this.A6 * Y,
+        dudy: this.A3 + 2 * this.A5 * Y + this.A6 * X,
+        dvdx: this.B2 + 2 * this.B4 * X + this.B6 * Y,
+        dvdy: this.B3 + 2 * this.B5 * Y + this.B6 * X,
+      };
+    },
+
+    // Stretch λₙ = |F·n|
+    stretchN() {
+      const theta = this.directionAngle * Math.PI / 180;
+      const cn = Math.cos(theta); const sn = Math.sin(theta);
+      const { dudx, dudy, dvdx, dvdy } = this._F;
+      const Fnx = (1 + dudx) * cn + dudy * sn;
+      const Fny = dvdx * cn + (1 + dvdy) * sn;
+      return Math.sqrt(Fnx * Fnx + Fny * Fny);
+    },
+
+    // Stretch λₛ = |F·s|
+    stretchS() {
+      const theta = this.directionAngle * Math.PI / 180;
+      const cs = -Math.sin(theta); const ss = Math.cos(theta);
+      const { dudx, dudy, dvdx, dvdy } = this._F;
+      const Fsx = (1 + dudx) * cs + dudy * ss;
+      const Fsy = dvdx * cs + (1 + dvdy) * ss;
+      return Math.sqrt(Fsx * Fsx + Fsy * Fsy);
+    },
+
+    // Actual angle between deformed n and s arms (degrees)
+    deformedAngleDeg() {
+      const theta = this.directionAngle * Math.PI / 180;
+      const cn = Math.cos(theta); const sn = Math.sin(theta);
+      const cs = -sn; const ss = cn;
+      const { dudx, dudy, dvdx, dvdy } = this._F;
+      const Fnx = (1 + dudx) * cn + dudy * sn;
+      const Fny = dvdx * cn + (1 + dvdy) * sn;
+      const Fsx = (1 + dudx) * cs + dudy * ss;
+      const Fsy = dvdx * cs + (1 + dvdy) * ss;
+      const dot = Fnx * Fsx + Fny * Fsy;
+      const mag1 = Math.sqrt(Fnx * Fnx + Fny * Fny);
+      const mag2 = Math.sqrt(Fsx * Fsx + Fsy * Fsy);
+      return Math.acos(Math.max(-1, Math.min(1, dot / (mag1 * mag2)))) * 180 / Math.PI;
+    },
+
+    // Engineering shear strain γns = π/2 − angle(F·n, F·s) [radians, dimensionless]
+    gammaNs() {
+      return (Math.PI / 2) - this.deformedAngleDeg * Math.PI / 180;
+    },
+
+    gammaNsDeg() {
+      return 90 - this.deformedAngleDeg;
+    },
+
+    // SVG arc path for the angle visual in column 4
+    svgArcPath() {
+      const angleDeg = this.deformedAngleDeg;
+      const r = 18;
+      const cx = 40; const cy = 40;
+      // Draw a sector from -45° to (-45° + angleDeg) so it's centered nicely
+      const start = -Math.PI / 4; // -45°
+      const end = start + angleDeg * Math.PI / 180;
+      const x1 = cx + r * Math.cos(start);
+      const y1 = cy - r * Math.sin(start);
+      const x2 = cx + r * Math.cos(end);
+      const y2 = cy - r * Math.sin(end);
+      const largeArc = angleDeg > 180 ? 1 : 0;
+      return `M ${cx} ${cy} L ${x1} ${y1} A ${r} ${r} 0 ${largeArc} 0 ${x2} ${y2} Z`;
     },
   },
 
@@ -462,7 +586,7 @@ export default {
       },
     },
     directionAngle() {
-      this.updateDirArrow();
+      this.updateStrainGauge(false);
     },
   },
 
@@ -491,8 +615,9 @@ export default {
       }
     }
 
-    // Analysis point P (orange, draggable)
     this.boardObj = brd;
+
+    // ── Draggable reference point P ──────────────────────────────────────────
     this.strainPt = brd.create('point', [0.5, 0.5], {
       name: 'P',
       size: 6,
@@ -500,46 +625,96 @@ export default {
       strokeColor: '#BF360C',
       fillOpacity: 0.9,
       strokeWidth: 2,
-      label: {
-        offset: [8, 6],
-        fontSize: 13,
-        fontWeight: 'bold',
-        strokeColor: '#FF6D00',
-      },
+      label: { offset: [8, 6], fontSize: 13, fontWeight: 'bold', strokeColor: '#FF6D00' },
       cursor: 'pointer',
+      zIndex: 10,
     });
 
-    // Hidden anchor point for direction arrow tip
-    this.dirEndPt = brd.create('point', [0.65, 0.5], {
-      visible: false,
-      fixed: false,
+    // ── Strain gauge cross ───────────────────────────────────────────────────
+    const len = this.strainLen;
+    const th0 = this.directionAngle * Math.PI / 180;
+    const cx0 = this.strainPointX;
+    const cy0 = this.strainPointY;
+
+    const ptOpts = { visible: false, fixed: false, name: '' };
+    const dotOpts = (color) => ({
+      visible: true, fixed: false, name: '',
+      size: 4, fillColor: color, strokeColor: color, strokeWidth: 1,
+      highlight: false,
     });
 
-    // Direction arrow
-    brd.create('arrow', [this.strainPt, this.dirEndPt], {
-      strokeColor: '#FF6D00',
-      strokeWidth: 2.5,
-      lastArrow: { type: 1, size: 8 },
-      fixed: true,
+    // Reference cross anchor points (gray dashed, always at P + initial directions)
+    this.refA = brd.create('point', [cx0 - len * Math.cos(th0), cy0 - len * Math.sin(th0)], ptOpts);
+    this.refB = brd.create('point', [cx0 + len * Math.cos(th0), cy0 + len * Math.sin(th0)], ptOpts);
+    this.refC = brd.create('point', [cx0 - len * Math.sin(th0), cy0 + len * Math.cos(th0)], ptOpts);
+    this.refD = brd.create('point', [cx0 + len * Math.sin(th0), cy0 - len * Math.cos(th0)], ptOpts);
+
+    // Deformed cross tip points (colored, animated)
+    this.tipA = brd.create('point', [cx0 - len * Math.cos(th0), cy0 - len * Math.sin(th0)], dotOpts('#1565C0'));
+    this.tipB = brd.create('point', [cx0 + len * Math.cos(th0), cy0 + len * Math.sin(th0)], dotOpts('#1565C0'));
+    this.tipC = brd.create('point', [cx0 - len * Math.sin(th0), cy0 + len * Math.cos(th0)], dotOpts('#00897B'));
+    this.tipD = brd.create('point', [cx0 + len * Math.sin(th0), cy0 - len * Math.cos(th0)], dotOpts('#00897B'));
+
+    // Reference segments — gray dashed
+    brd.create('segment', [this.refA, this.refB], {
+      strokeColor: '#bbb', strokeWidth: 1.5, dash: 2, strokeOpacity: 0.75,
+      highlight: false,
+    });
+    brd.create('segment', [this.refC, this.refD], {
+      strokeColor: '#bbb', strokeWidth: 1.5, dash: 2, strokeOpacity: 0.75,
+      highlight: false,
     });
 
+    // Deformed segments — colored solid
+    brd.create('segment', [this.tipA, this.tipB], {
+      strokeColor: '#1565C0', strokeWidth: 2.5, highlight: false,
+    });
+    brd.create('segment', [this.tipC, this.tipD], {
+      strokeColor: '#00897B', strokeWidth: 2.5, highlight: false,
+    });
+
+    // Center of cross = midpoint of n-arm (reactive in JSXGraph)
+    this.pCenter = brd.create('midpoint', [this.tipA, this.tipB], { visible: false, name: '' });
+
+    // Angle arc between deformed arms (tipB → pCenter → tipC, counterclockwise)
+    brd.create('angle', [this.tipB, this.pCenter, this.tipC], {
+      type: 'sector',
+      radius: 0.055,
+      fillColor: 'rgba(230, 74, 25, 0.18)',
+      strokeColor: '#E64A19',
+      strokeWidth: 1.5,
+      label: { visible: false },
+      highlight: false,
+    });
+
+    // Arm end labels (function-based → JSXGraph auto-updates during animation)
+    brd.create('text', [
+      () => this.tipB.X() + 0.02,
+      () => this.tipB.Y(),
+      'n',
+    ], { fontSize: 11, color: '#1565C0', anchorX: 'left', highlight: false });
+
+    brd.create('text', [
+      () => this.tipC.X() + 0.01,
+      () => this.tipC.Y() + 0.02,
+      's',
+    ], { fontSize: 11, color: '#00897B', anchorX: 'left', highlight: false });
+
+    // ── Drag handler ─────────────────────────────────────────────────────────
     this.strainPt.on('drag', () => {
       this.strainPointX = this.strainPt.X();
       this.strainPointY = this.strainPt.Y();
-      this.updateDirArrow();
+      this.updateStrainGauge(false);
     });
 
-    setTimeout(() => {
-      this.CLICK_FINAL();
-    }, 1000);
+    setTimeout(() => { this.CLICK_FINAL(); }, 1000);
   },
 
   methods: {
     SET_ZERO() {
-      Object.keys(this.coeffs).forEach((k) => {
-        this.coeffs[k] = 0;
-      });
+      Object.keys(this.coeffs).forEach((k) => { this.coeffs[k] = 0; });
     },
+
     SET_INITIAL() {
       this.state = 'INITIAL';
       let k = 0;
@@ -549,7 +724,9 @@ export default {
           k += 1;
         }
       }
+      this.updateStrainGauge(false);
     },
+
     CLICK_INITIAL() {
       this.state = 'INITIAL';
       let k = 0;
@@ -559,7 +736,9 @@ export default {
           k += 1;
         }
       }
+      this.updateStrainGauge(true);
     },
+
     CLICK_FINAL() {
       this.state = 'FINAL';
       let k = 0;
@@ -576,15 +755,86 @@ export default {
           k += 1;
         }
       }
+      this.updateStrainGauge(true);
     },
-    updateDirArrow() {
-      if (!this.dirEndPt || !this.boardObj) return;
-      const len = 0.18;
+
+    // Returns positions for reference cross and deformed cross tips
+    computeStrainGaugeTips(final) {
+      const len = this.strainLen;
       const theta = this.directionAngle * Math.PI / 180;
-      const ex = this.strainPointX + len * Math.cos(theta);
-      const ey = this.strainPointY + len * Math.sin(theta);
-      this.dirEndPt.setPosition(JXG.COORDS_BY_USER, [ex, ey]);
-      this.boardObj.update();
+      const cn = Math.cos(theta); const sn = Math.sin(theta);
+      // s = n rotated 90° CCW
+      const cs = -sn; const ss = cn;
+
+      const X = this.strainPointX; const Y = this.strainPointY;
+
+      // Reference cross always at P
+      const ref = {
+        A: [X - len * cn, Y - len * sn],
+        B: [X + len * cn, Y + len * sn],
+        C: [X + len * cs, Y + len * ss],
+        D: [X - len * cs, Y - len * ss],
+      };
+
+      if (!final) {
+        return { ref, def: { A: ref.A, B: ref.B, C: ref.C, D: ref.D } };
+      }
+
+      // Deformed P position
+      const {
+        A1, A2, A3, A4, A5, A6, B1, B2, B3, B4, B5, B6,
+      } = this;
+      const ux = A1 + A2 * X + A3 * Y + A4 * X * X + A5 * Y * Y + A6 * X * Y;
+      const uy = B1 + B2 * X + B3 * Y + B4 * X * X + B5 * Y * Y + B6 * X * Y;
+      const Px = X + ux; const Py = Y + uy;
+
+      // Deformation gradient F at P
+      const dudx = A2 + 2 * A4 * X + A6 * Y;
+      const dudy = A3 + 2 * A5 * Y + A6 * X;
+      const dvdx = B2 + 2 * B4 * X + B6 * Y;
+      const dvdy = B3 + 2 * B5 * Y + B6 * X;
+
+      // F·n (deformed n-direction vector, scaled by len)
+      const Fnx = ((1 + dudx) * cn + dudy * sn) * len;
+      const Fny = (dvdx * cn + (1 + dvdy) * sn) * len;
+
+      // F·s (deformed s-direction vector, scaled by len)
+      const Fsx = ((1 + dudx) * cs + dudy * ss) * len;
+      const Fsy = (dvdx * cs + (1 + dvdy) * ss) * len;
+
+      return {
+        ref,
+        def: {
+          A: [Px - Fnx, Py - Fny],
+          B: [Px + Fnx, Py + Fny],
+          C: [Px + Fsx, Py + Fsy],
+          D: [Px - Fsx, Py - Fsy],
+        },
+      };
+    },
+
+    // Update all strain gauge points; animate = true uses 800 ms
+    updateStrainGauge(animate) {
+      if (!this.tipA || !this.refA) return;
+      const final = this.state === 'FINAL';
+      const { ref, def } = this.computeStrainGaugeTips(final);
+      const dur = animate ? 800 : 1;
+
+      // Reference cross — always immediate (no animation needed)
+      this.refA.setPosition(JXG.COORDS_BY_USER, ref.A);
+      this.refB.setPosition(JXG.COORDS_BY_USER, ref.B);
+      this.refC.setPosition(JXG.COORDS_BY_USER, ref.C);
+      this.refD.setPosition(JXG.COORDS_BY_USER, ref.D);
+
+      // Deformed cross — animate
+      this.tipA.moveTo(def.A, dur);
+      this.tipB.moveTo(def.B, dur);
+      this.tipC.moveTo(def.C, dur);
+      this.tipD.moveTo(def.D, dur);
+
+      if (!animate) {
+        this.boardObj.update();
+      }
     },
   },
 };
@@ -620,16 +870,12 @@ export default {
   color: white;
   border-radius: 8px 8px 0 0;
 }
-.section-header--primary {
-  background: linear-gradient(90deg, #1565C0, #1976D2);
-}
+.section-header--primary  { background: linear-gradient(90deg, #1565C0, #1976D2); }
 .section-header--secondary {
   background: linear-gradient(90deg, #00695C, #00897B);
   border-radius: 8px 8px 0 0;
 }
-.section-header--strain {
-  background: linear-gradient(90deg, #BF360C, #E64A19);
-}
+.section-header--strain { background: linear-gradient(90deg, #BF360C, #E64A19); }
 
 .formula-strip {
   background: #E8F5E9;
@@ -639,80 +885,37 @@ export default {
 }
 
 /* Cards */
-.coeff-card,
-.viz-card,
-.strain-card {
+.coeff-card, .viz-card, .strain-card {
   border-radius: 10px;
   box-shadow: 0 2px 12px rgba(0,0,0,0.08);
   overflow: hidden;
 }
 
 /* Coefficient table */
-.coeff-table {
-  width: 100%;
-}
-.coeff-table thead tr {
-  background: #F8F9FF;
-}
+.coeff-table { width: 100%; }
+.coeff-table thead tr { background: #F8F9FF; }
 .term-col {
-  font-weight: 600;
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  font-weight: 600; font-size: 12px;
+  text-transform: uppercase; letter-spacing: 0.5px;
 }
-.coeff-col-a {
-  background: #EEF2FF;
-  font-size: 13px;
-  padding: 8px 4px;
-}
-.coeff-col-b {
-  background: #E8FAF5;
-  font-size: 13px;
-  padding: 8px 4px;
-}
-.col-label {
-  font-size: 10px;
-  font-weight: 400;
-  color: #888;
-  margin-top: 2px;
-}
-.coeff-row:hover {
-  background: #FAFBFF;
-}
-.term-cell {
-  background: #FAFAFA;
-}
-.input-cell-a {
-  background: #F7F9FF;
-}
-.input-cell-b {
-  background: #F4FBF8;
-}
+.coeff-col-a { background: #EEF2FF; font-size: 13px; padding: 8px 4px; }
+.coeff-col-b { background: #E8FAF5; font-size: 13px; padding: 8px 4px; }
+.col-label { font-size: 10px; font-weight: 400; color: #888; margin-top: 2px; }
+.coeff-row:hover { background: #FAFBFF; }
+.term-cell   { background: #FAFAFA; }
+.input-cell-a { background: #F7F9FF; }
+.input-cell-b { background: #F4FBF8; }
 
-/* State toggle inside visualization header */
+/* State toggle */
 .state-toggle-group {
   display: flex;
   background: rgba(255,255,255,0.15);
   border-radius: 6px;
   overflow: hidden;
 }
-.state-btn {
-  color: rgba(255,255,255,0.7) !important;
-  border-radius: 0 !important;
-  font-size: 11px;
-}
-.state-btn-active {
-  color: white !important;
-  background: rgba(255,255,255,0.25) !important;
-  border-radius: 0 !important;
-  font-size: 11px;
-}
-
-.result-badge {
-  font-size: 11px;
-  min-width: 28px;
-  text-align: center;
-}
+.state-btn        { color: rgba(255,255,255,0.7) !important; border-radius: 0 !important; font-size: 11px; }
+.state-btn-active { color: white !important; background: rgba(255,255,255,0.25) !important; border-radius: 0 !important; font-size: 11px; }
+.result-badge     { font-size: 11px; min-width: 28px; text-align: center; }
 
 /* JSXGraph board */
 .jxgbox {
@@ -727,13 +930,9 @@ export default {
   -ms-touch-action: none;
   touch-action: none;
 }
+.jxgbox svg text { cursor: default; user-select: none; }
 
-.jxgbox svg text {
-  cursor: default;
-  user-select: none;
-}
-
-/* ── Strain analysis ── */
+/* ── Strain analysis ──────────────────────────────────────────────────── */
 
 .strain-section-label {
   font-size: 11px;
@@ -744,11 +943,7 @@ export default {
   margin-bottom: 6px;
 }
 
-.strain-hint {
-  font-size: 11px;
-  color: #999;
-  line-height: 1.4;
-}
+.strain-hint { font-size: 11px; color: #999; line-height: 1.4; }
 
 .angle-display {
   font-size: 17px;
@@ -759,118 +954,73 @@ export default {
 }
 
 /* Tensor matrix */
-.tensor-wrapper {
+.tensor-wrapper { display: flex; align-items: center; justify-content: center; margin: 8px 0 4px; }
+.tensor-bracket-left  { width: 8px; height: 80px; border: 2px solid #8D6E63; border-right: none; border-radius: 3px 0 0 3px; margin-right: 4px; }
+.tensor-bracket-right { width: 8px; height: 80px; border: 2px solid #8D6E63; border-left:  none; border-radius: 0 3px 3px 0; margin-left:  4px; }
+.tensor-table { border-collapse: separate; border-spacing: 5px; }
+.tensor-table td { text-align: center; padding: 6px 14px; background: #FFF3E0; border-radius: 4px; min-width: 90px; }
+.tensor-label { font-size: 10px; color: #A1887F; margin-bottom: 2px; }
+.tensor-value { font-size: 14px; font-weight: 700; color: #BF360C; font-family: 'Roboto Mono', monospace; }
+
+/* Arm boxes */
+.arm-box {
+  border-radius: 8px;
+  padding: 8px 12px;
+  border-left: 4px solid;
+}
+.arm-box--n { background: #EEF2FF; border-color: #1565C0; }
+.arm-box--s { background: #E8FAF5; border-color: #00897B; }
+
+.arm-box-header {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  margin-bottom: 4px;
   display: flex;
   align-items: center;
+}
+.arm-dot {
+  display: inline-block;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  margin-right: 5px;
+  flex-shrink: 0;
+}
+.arm-dot--n { background: #1565C0; }
+.arm-dot--s { background: #00897B; }
+
+.arm-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  padding: 2px 0;
+}
+.arm-key { color: #888; }
+.arm-val { font-family: 'Roboto Mono', monospace; font-weight: 600; }
+
+/* Angle column */
+.angle-visual-box {
+  display: flex;
   justify-content: center;
-  margin: 8px 0 4px;
 }
 
-.tensor-bracket-left {
-  width: 8px;
-  height: 80px;
-  border: 2px solid #8D6E63;
-  border-right: none;
-  border-radius: 3px 0 0 3px;
-  margin-right: 4px;
-}
-
-.tensor-bracket-right {
-  width: 8px;
-  height: 80px;
-  border: 2px solid #8D6E63;
-  border-left: none;
-  border-radius: 0 3px 3px 0;
-  margin-left: 4px;
-}
-
-.tensor-table {
-  border-collapse: separate;
-  border-spacing: 5px;
-}
-
-.tensor-table td {
-  text-align: center;
-  padding: 6px 14px;
-  background: #FFF3E0;
-  border-radius: 4px;
-  min-width: 90px;
-}
-
-.tensor-label {
-  font-size: 10px;
-  color: #A1887F;
-  margin-bottom: 2px;
-}
-
-.tensor-value {
-  font-size: 14px;
-  font-weight: 700;
-  color: #BF360C;
-  font-family: 'Roboto Mono', monospace;
-}
-
-/* Normal strain box */
-.normal-strain-box {
+.angle-info-box {
   background: #FFF3E0;
   border-radius: 8px;
-  padding: 10px 14px;
-  text-align: center;
+  padding: 8px 12px;
   border-left: 4px solid #E64A19;
 }
 
-.normal-strain-formula {
-  font-size: 10px;
-  color: #A1887F;
-  margin-bottom: 4px;
+.angle-info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  padding: 2px 0;
+  border-bottom: 1px solid rgba(0,0,0,0.04);
 }
-
-.normal-strain-label {
-  font-size: 10px;
-  font-weight: 600;
-  text-transform: uppercase;
-  color: #BF360C;
-  letter-spacing: 0.3px;
-  margin-bottom: 2px;
-}
-
-.normal-strain-value {
-  font-size: 22px;
-  font-weight: 700;
-  color: #BF360C;
-  font-family: 'Roboto Mono', monospace;
-  letter-spacing: 1px;
-}
-
-/* Shear strain box */
-.shear-strain-box {
-  background: #FBE9E7;
-  border-radius: 8px;
-  padding: 10px 14px;
-  text-align: center;
-  border-left: 4px solid #FF7043;
-}
-
-.shear-formula {
-  font-size: 10px;
-  color: #A1887F;
-  margin-bottom: 4px;
-}
-
-.shear-strain-label {
-  font-size: 10px;
-  font-weight: 600;
-  text-transform: uppercase;
-  color: #D84315;
-  letter-spacing: 0.3px;
-  margin-bottom: 2px;
-}
-
-.shear-value {
-  font-size: 22px;
-  font-weight: 700;
-  color: #D84315;
-  font-family: 'Roboto Mono', monospace;
-  letter-spacing: 1px;
-}
+.angle-info-row:last-child { border-bottom: none; }
+.angle-info-key { color: #A1887F; }
+.angle-info-val { font-family: 'Roboto Mono', monospace; font-weight: 700; font-size: 12px; }
 </style>
