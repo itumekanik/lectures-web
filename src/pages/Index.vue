@@ -261,11 +261,15 @@
                   Arm Lengths &amp; Normal Strains
                 </div>
 
-                <!-- n-arm (red) -->
-                <div class="arm-box arm-box--n q-mb-sm">
-                  <div class="arm-box-header" style="color:#E53935">
-                    <span class="arm-dot arm-dot--n"></span>
+                <!-- n-arm -->
+                <div class="arm-box q-mb-sm"
+                     :style="{ background: armColorN.bg, borderColor: armColorN.border, borderLeft: '4px solid ' + armColorN.border }">
+                  <div class="arm-box-header" :style="{ color: armColorN.text }">
+                    <span class="arm-dot" :style="{ background: armColorN.border }"></span>
                     n-arm &nbsp;(θ = {{ directionAngle }}°)
+                    <span class="arm-state-tag q-ml-xs" :style="{ color: armColorN.text }">
+                      {{ eps_normal > 1e-6 ? '▲ uzama' : eps_normal < -1e-6 ? '▼ kısalma' : '— sıfır' }}
+                    </span>
                   </div>
                   <div class="arm-row">
                     <span class="arm-key">stretch λ<sub>n</sub></span>
@@ -277,11 +281,15 @@
                   </div>
                 </div>
 
-                <!-- s-arm (purple) -->
-                <div class="arm-box arm-box--s q-mb-sm">
-                  <div class="arm-box-header" style="color:#7B1FA2">
-                    <span class="arm-dot arm-dot--s"></span>
+                <!-- s-arm -->
+                <div class="arm-box q-mb-sm"
+                     :style="{ background: armColorS.bg, borderColor: armColorS.border, borderLeft: '4px solid ' + armColorS.border }">
+                  <div class="arm-box-header" :style="{ color: armColorS.text }">
+                    <span class="arm-dot" :style="{ background: armColorS.border }"></span>
                     s-arm &nbsp;(θ+90° = {{ directionAngle + 90 }}°)
+                    <span class="arm-state-tag q-ml-xs" :style="{ color: armColorS.text }">
+                      {{ eps_normal_s > 1e-6 ? '▲ uzama' : eps_normal_s < -1e-6 ? '▼ kısalma' : '— sıfır' }}
+                    </span>
                   </div>
                   <div class="arm-row">
                     <span class="arm-key">stretch λ<sub>s</sub></span>
@@ -523,6 +531,22 @@ export default {
     },
     eps_max_shear() { return this.eps_radius; },
 
+    // Panel color for n and s arm boxes based on strain sign
+    armColorN() {
+      const e = this.eps_normal;
+      if (Math.abs(e) < 1e-6) return { bg: '#F5F5F5', border: '#9E9E9E', text: '#757575' };
+      return e > 0
+        ? { bg: '#FFEBEE', border: '#E53935', text: '#E53935' }
+        : { bg: '#E3F2FD', border: '#1565C0', text: '#1565C0' };
+    },
+    armColorS() {
+      const e = this.eps_normal_s;
+      if (Math.abs(e) < 1e-6) return { bg: '#F5F5F5', border: '#9E9E9E', text: '#757575' };
+      return e > 0
+        ? { bg: '#F3E5F5', border: '#7B1FA2', text: '#7B1FA2' }
+        : { bg: '#E0F7FA', border: '#00838F', text: '#00838F' };
+    },
+
     // Deformation gradient helpers at P
     _F() {
       const X = this.strainPointX; const Y = this.strainPointY;
@@ -682,11 +706,11 @@ export default {
       highlight: false,
     });
 
-    // Deformed segments — colored solid
-    brd.create('segment', [this.tipA, this.tipB], {
+    // Deformed segments — colored solid (refs stored for dynamic color update)
+    this.segN = brd.create('segment', [this.tipA, this.tipB], {
       strokeColor: '#E53935', strokeWidth: 2.5, highlight: false,
     });
-    brd.create('segment', [this.tipC, this.tipD], {
+    this.segS = brd.create('segment', [this.tipC, this.tipD], {
       strokeColor: '#7B1FA2', strokeWidth: 2.5, highlight: false,
     });
 
@@ -849,9 +873,24 @@ export default {
       this.tipC.moveTo(def.C, dur);
       this.tipD.moveTo(def.D, dur);
 
+      // Color encodes elongation (+) vs shortening (−)
+      if (this.segN) {
+        this.segN.setAttribute({ strokeColor: this.strainColor(this.eps_normal) });
+      }
+      if (this.segS) {
+        this.segS.setAttribute({ strokeColor: this.strainColor(this.eps_normal_s) });
+      }
+
       if (!animate) {
         this.boardObj.update();
       }
+    },
+
+    // Returns a color interpolated between blue (−) and red/purple (+), grey at 0
+    strainColor(eps) {
+      const threshold = 1e-6;
+      if (Math.abs(eps) < threshold) return '#9E9E9E';
+      return eps > 0 ? '#E53935' : '#1565C0';
     },
   },
 };
@@ -985,8 +1024,6 @@ export default {
   padding: 8px 12px;
   border-left: 4px solid;
 }
-.arm-box--n { background: #FFEBEE; border-color: #E53935; }
-.arm-box--s { background: #F3E5F5; border-color: #7B1FA2; }
 
 .arm-box-header {
   font-size: 11px;
@@ -996,6 +1033,15 @@ export default {
   margin-bottom: 4px;
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 2px;
+}
+.arm-state-tag {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  margin-left: 4px;
 }
 .arm-dot {
   display: inline-block;
@@ -1004,8 +1050,6 @@ export default {
   margin-right: 5px;
   flex-shrink: 0;
 }
-.arm-dot--n { background: #E53935; }
-.arm-dot--s { background: #7B1FA2; }
 
 .arm-row {
   display: flex;
