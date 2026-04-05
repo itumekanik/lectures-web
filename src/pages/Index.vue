@@ -261,9 +261,9 @@
                   Arm Lengths &amp; Normal Strains
                 </div>
 
-                <!-- n-arm (blue) -->
+                <!-- n-arm (red) -->
                 <div class="arm-box arm-box--n q-mb-sm">
-                  <div class="arm-box-header">
+                  <div class="arm-box-header" style="color:#E53935">
                     <span class="arm-dot arm-dot--n"></span>
                     n-arm &nbsp;(θ = {{ directionAngle }}°)
                   </div>
@@ -277,9 +277,9 @@
                   </div>
                 </div>
 
-                <!-- s-arm (green) -->
+                <!-- s-arm (purple) -->
                 <div class="arm-box arm-box--s q-mb-sm">
-                  <div class="arm-box-header">
+                  <div class="arm-box-header" style="color:#7B1FA2">
                     <span class="arm-dot arm-dot--s"></span>
                     s-arm &nbsp;(θ+90° = {{ directionAngle + 90 }}°)
                   </div>
@@ -309,26 +309,44 @@
                 <!-- Angle visual -->
                 <div class="angle-visual-box q-mb-sm">
                   <div class="angle-arc-display">
-                    <svg viewBox="0 0 80 80" width="80" height="80">
-                      <!-- reference right-angle indicator -->
-                      <polyline
-                        points="50,40 40,40 40,30"
-                        fill="none" stroke="#ccc" stroke-width="1.5" stroke-dasharray="3,2"
-                      />
-                      <!-- deformed angle arc -->
+                    <!--
+                      Schematic: n-arm fixed pointing right (+x).
+                      s-arm at deformedAngleDeg CCW from n-arm.
+                      Reference 90° shown as dashed vertical.
+                      Orange arc = actual deformed angle between arms.
+                    -->
+                    <svg viewBox="0 0 90 90" width="90" height="90">
+                      <!-- reference 90°: horizontal (n ref) + vertical (s ref) dashed -->
+                      <line x1="40" y1="45" x2="75" y2="45"
+                            stroke="#ccc" stroke-width="1.5" stroke-dasharray="3,2" />
+                      <line x1="40" y1="45" x2="40" y2="10"
+                            stroke="#ccc" stroke-width="1.5" stroke-dasharray="3,2" />
+                      <!-- small square marker for 90° reference -->
+                      <rect x="40" y="37" width="6" height="6"
+                            fill="none" stroke="#ccc" stroke-width="1" />
+
+                      <!-- orange arc = deformed angle between arms -->
                       <path :d="svgArcPath" fill="rgba(230,74,25,0.15)" stroke="#E64A19" stroke-width="1.5" />
-                      <!-- n-arm (blue) -->
-                      <line x1="40" y1="40" :x2="40 + 30*Math.cos(-deformedAngleDeg * Math.PI / 180 / 2 + Math.PI/4)"
-                            :y2="40 - 30*Math.sin(-deformedAngleDeg * Math.PI / 180 / 2 + Math.PI/4)"
-                            stroke="#1565C0" stroke-width="2.5" />
-                      <!-- s-arm (green) -->
-                      <line x1="40" y1="40"
-                            :x2="40 + 30*Math.cos(deformedAngleDeg * Math.PI / 180 / 2 + Math.PI/4)"
-                            :y2="40 - 30*Math.sin(deformedAngleDeg * Math.PI / 180 / 2 + Math.PI/4)"
-                            stroke="#00897B" stroke-width="2.5" />
-                      <!-- angle label -->
-                      <text x="40" y="56" text-anchor="middle" font-size="10" fill="#E64A19" font-weight="bold">
-                        {{ deformedAngleDeg.toFixed(1) }}°
+
+                      <!-- n-arm: fixed pointing right (red) -->
+                      <line x1="40" y1="45" x2="75" y2="45"
+                            stroke="#E53935" stroke-width="2.5" />
+                      <!-- s-arm: deformedAngleDeg CCW from n-arm (purple) -->
+                      <line x1="40" y1="45"
+                            :x2="40 + 32 * Math.cos(deformedAngleDeg * Math.PI / 180)"
+                            :y2="45 - 32 * Math.sin(deformedAngleDeg * Math.PI / 180)"
+                            stroke="#7B1FA2" stroke-width="2.5" />
+
+                      <!-- labels -->
+                      <text x="76" y="48" font-size="10" fill="#E53935" font-weight="bold">n</text>
+                      <text
+                        :x="40 + 36 * Math.cos(deformedAngleDeg * Math.PI / 180)"
+                        :y="45 - 36 * Math.sin(deformedAngleDeg * Math.PI / 180)"
+                        font-size="10" fill="#7B1FA2" font-weight="bold" text-anchor="middle">s</text>
+
+                      <!-- angle value -->
+                      <text x="45" y="72" text-anchor="middle" font-size="11" fill="#E64A19" font-weight="bold">
+                        {{ deformedAngleDeg.toFixed(2) }}°
                       </text>
                     </svg>
                   </div>
@@ -561,18 +579,19 @@ export default {
       return 90 - this.deformedAngleDeg;
     },
 
-    // SVG arc path for the angle visual in column 4
+    // SVG arc path: sector from 0° (n-arm, pointing right) to deformedAngleDeg (CCW).
+    // SVG origin (40,45), y-axis flipped → subtract sin for y.
     svgArcPath() {
       const angleDeg = this.deformedAngleDeg;
       const r = 18;
-      const cx = 40; const cy = 40;
-      // Draw a sector from -45° to (-45° + angleDeg) so it's centered nicely
-      const start = -Math.PI / 4; // -45°
-      const end = start + angleDeg * Math.PI / 180;
-      const x1 = cx + r * Math.cos(start);
-      const y1 = cy - r * Math.sin(start);
-      const x2 = cx + r * Math.cos(end);
-      const y2 = cy - r * Math.sin(end);
+      const cx = 40; const cy = 45;
+      // start = 0° (right)
+      const x1 = cx + r;
+      const y1 = cy;
+      // end = deformedAngleDeg CCW
+      const rad = angleDeg * Math.PI / 180;
+      const x2 = cx + r * Math.cos(rad);
+      const y2 = cy - r * Math.sin(rad);
       const largeArc = angleDeg > 180 ? 1 : 0;
       return `M ${cx} ${cy} L ${x1} ${y1} A ${r} ${r} 0 ${largeArc} 0 ${x2} ${y2} Z`;
     },
