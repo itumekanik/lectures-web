@@ -966,8 +966,8 @@ export default {
   padding: 8px 12px;
   border-left: 4px solid;
 }
-.arm-box--n { background: #EEF2FF; border-color: #1565C0; }
-.arm-box--s { background: #E8FAF5; border-color: #00897B; }
+.arm-box--n { background: #FFEBEE; border-color: #E53935; }
+.arm-box--s { background: #F3E5F5; border-color: #7B1FA2; }
 
 .arm-box-header {
   font-size: 11px;
@@ -985,8 +985,8 @@ export default {
   margin-right: 5px;
   flex-shrink: 0;
 }
-.arm-dot--n { background: #1565C0; }
-.arm-dot--s { background: #00897B; }
+.arm-dot--n { background: #E53935; }
+.arm-dot--s { background: #7B1FA2; }
 
 .arm-row {
   display: flex;
