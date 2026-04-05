@@ -21,7 +21,7 @@
     </div>
 
     <!-- Main content -->
-    <div class="row q-px-lg q-pt-md q-pb-lg q-col-gutter-md">
+    <div class="row q-px-lg q-pt-md q-pb-sm q-col-gutter-md">
 
       <!-- Left: Coefficients -->
       <div class="col-12 col-md-5">
@@ -149,6 +149,147 @@
       </div>
 
     </div>
+
+    <!-- Strain Analysis Row -->
+    <div class="row q-px-lg q-pb-lg q-col-gutter-md">
+      <div class="col-12">
+        <q-card class="strain-card">
+
+          <div class="section-header section-header--strain">
+            <q-icon name="grid_3x3" size="18px" class="q-mr-xs" />
+            Infinitesimal Strain Tensor — Point P
+          </div>
+
+          <q-card-section class="q-pa-md">
+            <div class="row q-col-gutter-md items-start">
+
+              <!-- Column 1: Point & Direction -->
+              <div class="col-12 col-md-4">
+                <div class="strain-section-label">Reference Point P</div>
+                <div class="row q-gutter-sm q-mb-xs">
+                  <div class="col">
+                    <q-input
+                      label="X"
+                      :model-value="strainPointX.toFixed(3)"
+                      dense outlined readonly
+                      label-color="deep-orange"
+                    />
+                  </div>
+                  <div class="col">
+                    <q-input
+                      label="Y"
+                      :model-value="strainPointY.toFixed(3)"
+                      dense outlined readonly
+                      label-color="deep-orange"
+                    />
+                  </div>
+                </div>
+                <div class="strain-hint q-mb-md">
+                  <q-icon name="touch_app" size="14px" class="q-mr-xs" />
+                  Drag the orange point P on the visualization
+                </div>
+
+                <div class="strain-section-label">Direction Angle θ</div>
+                <div class="row items-center no-wrap q-mb-xs">
+                  <span class="angle-display q-mr-sm">{{ directionAngle }}°</span>
+                  <q-slider
+                    v-model="directionAngle"
+                    :min="0"
+                    :max="180"
+                    :step="1"
+                    color="deep-orange"
+                    class="col"
+                  />
+                </div>
+                <div class="strain-hint">
+                  n = ({{ nxDisplay }}, {{ nyDisplay }})
+                </div>
+              </div>
+
+              <!-- Column 2: Strain Tensor -->
+              <div class="col-12 col-md-4">
+                <div class="strain-section-label text-center">Strain Tensor [ε]</div>
+                <div class="tensor-wrapper">
+                  <div class="tensor-bracket-left"></div>
+                  <table class="tensor-table">
+                    <tbody>
+                      <tr>
+                        <td>
+                          <div class="tensor-label">ε<sub>xx</sub></div>
+                          <div class="tensor-value">{{ eps_xx.toFixed(5) }}</div>
+                        </td>
+                        <td>
+                          <div class="tensor-label">ε<sub>xy</sub></div>
+                          <div class="tensor-value">{{ eps_xy.toFixed(5) }}</div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <div class="tensor-label">ε<sub>xy</sub></div>
+                          <div class="tensor-value">{{ eps_xy.toFixed(5) }}</div>
+                        </td>
+                        <td>
+                          <div class="tensor-label">ε<sub>yy</sub></div>
+                          <div class="tensor-value">{{ eps_yy.toFixed(5) }}</div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <div class="tensor-bracket-right"></div>
+                </div>
+
+                <q-separator class="q-my-sm" />
+
+                <div class="strain-section-label text-center">Principal Strains</div>
+                <div class="row justify-center q-gutter-xs">
+                  <q-chip dense size="sm" color="blue-1" text-color="blue-9">
+                    ε<sub>1</sub> = {{ eps_principal_1.toFixed(5) }}
+                  </q-chip>
+                  <q-chip dense size="sm" color="green-1" text-color="green-9">
+                    ε<sub>2</sub> = {{ eps_principal_2.toFixed(5) }}
+                  </q-chip>
+                  <q-chip dense size="sm" color="orange-1" text-color="orange-9">
+                    θ<sub>p</sub> = {{ eps_principal_angle.toFixed(1) }}°
+                  </q-chip>
+                </div>
+              </div>
+
+              <!-- Column 3: Normal & Shear Strain -->
+              <div class="col-12 col-md-4">
+                <div class="strain-section-label text-center">
+                  Strain in Direction θ = {{ directionAngle }}°
+                </div>
+
+                <div class="normal-strain-box q-mb-sm">
+                  <div class="normal-strain-formula">
+                    ε<sub>n</sub> = ε<sub>xx</sub>cos²θ + 2ε<sub>xy</sub>cosθ sinθ + ε<sub>yy</sub>sin²θ
+                  </div>
+                  <div class="normal-strain-label">Normal strain</div>
+                  <div class="normal-strain-value">{{ eps_normal.toFixed(6) }}</div>
+                </div>
+
+                <div class="shear-strain-box q-mb-sm">
+                  <div class="shear-formula">
+                    γ<sub>ns</sub>/2 = (ε<sub>yy</sub>−ε<sub>xx</sub>)cosθ sinθ + ε<sub>xy</sub>(cos²θ−sin²θ)
+                  </div>
+                  <div class="shear-strain-label">Shear strain</div>
+                  <div class="shear-value">{{ eps_shear.toFixed(6) }}</div>
+                </div>
+
+                <div class="text-center">
+                  <q-chip dense color="deep-orange-1" text-color="deep-orange-9" size="sm">
+                    Max shear: γ<sub>max</sub>/2 = {{ eps_max_shear.toFixed(5) }}
+                  </q-chip>
+                </div>
+              </div>
+
+            </div>
+          </q-card-section>
+
+        </q-card>
+      </div>
+    </div>
+
   </q-page>
 </template>
 
@@ -201,6 +342,10 @@ export default {
         B5: 0,
         B6: -0.2,
       },
+      // Strain analysis
+      strainPointX: 0.5,
+      strainPointY: 0.5,
+      directionAngle: 0,
     };
   },
   computed: {
@@ -242,6 +387,71 @@ export default {
     B4() { return PF(this.coeffs.B4); },
     B5() { return PF(this.coeffs.B5); },
     B6() { return PF(this.coeffs.B6); },
+
+    // Strain tensor at point P
+    // u = A1 + A2*X + A3*Y + A4*X² + A5*Y² + A6*X*Y
+    // v = B1 + B2*X + B3*Y + B4*X² + B5*Y² + B6*X*Y
+    // εxx = ∂u/∂X = A2 + 2*A4*X + A6*Y
+    // εyy = ∂v/∂Y = B3 + 2*B5*Y + B6*X
+    // εxy = ½(∂u/∂Y + ∂v/∂X) = ½(A3 + 2*A5*Y + A6*X + B2 + 2*B4*X + B6*Y)
+    eps_xx() {
+      const X = this.strainPointX;
+      const Y = this.strainPointY;
+      return this.A2 + 2 * this.A4 * X + this.A6 * Y;
+    },
+    eps_yy() {
+      const X = this.strainPointX;
+      const Y = this.strainPointY;
+      return this.B3 + 2 * this.B5 * Y + this.B6 * X;
+    },
+    eps_xy() {
+      const X = this.strainPointX;
+      const Y = this.strainPointY;
+      const dudy = this.A3 + 2 * this.A5 * Y + this.A6 * X;
+      const dvdx = this.B2 + 2 * this.B4 * X + this.B6 * Y;
+      return 0.5 * (dudy + dvdx);
+    },
+
+    // Direction vector components
+    nxDisplay() { return Math.cos(this.directionAngle * Math.PI / 180).toFixed(3); },
+    nyDisplay() { return Math.sin(this.directionAngle * Math.PI / 180).toFixed(3); },
+
+    // Normal strain in direction n=(cosθ, sinθ)
+    // εn = εxx*cos²θ + 2*εxy*cosθ*sinθ + εyy*sin²θ
+    eps_normal() {
+      const theta = this.directionAngle * Math.PI / 180;
+      const c = Math.cos(theta);
+      const s = Math.sin(theta);
+      return this.eps_xx * c * c + 2 * this.eps_xy * c * s + this.eps_yy * s * s;
+    },
+
+    // Shear strain γns/2 in direction n, perpendicular s=(-sinθ, cosθ)
+    // γns/2 = (εyy - εxx)*cosθ*sinθ + εxy*(cos²θ - sin²θ)
+    eps_shear() {
+      const theta = this.directionAngle * Math.PI / 180;
+      const c = Math.cos(theta);
+      const s = Math.sin(theta);
+      return (this.eps_yy - this.eps_xx) * c * s + this.eps_xy * (c * c - s * s);
+    },
+
+    // Principal strains: ε1,2 = (εxx+εyy)/2 ± R, R = √[((εxx-εyy)/2)² + εxy²]
+    eps_radius() {
+      return Math.sqrt(((this.eps_xx - this.eps_yy) / 2) ** 2 + this.eps_xy ** 2);
+    },
+    eps_principal_1() {
+      return (this.eps_xx + this.eps_yy) / 2 + this.eps_radius;
+    },
+    eps_principal_2() {
+      return (this.eps_xx + this.eps_yy) / 2 - this.eps_radius;
+    },
+    // Principal angle: θp = ½ arctan(2εxy / (εxx - εyy))
+    eps_principal_angle() {
+      return 0.5 * Math.atan2(2 * this.eps_xy, this.eps_xx - this.eps_yy) * 180 / Math.PI;
+    },
+    // Max shear strain (half)
+    eps_max_shear() {
+      return this.eps_radius;
+    },
   },
 
   watch: {
@@ -250,6 +460,9 @@ export default {
       handler() {
         this.SET_INITIAL();
       },
+    },
+    directionAngle() {
+      this.updateDirArrow();
     },
   },
 
@@ -277,6 +490,44 @@ export default {
         );
       }
     }
+
+    // Analysis point P (orange, draggable)
+    this.boardObj = brd;
+    this.strainPt = brd.create('point', [0.5, 0.5], {
+      name: 'P',
+      size: 6,
+      fillColor: '#FF6D00',
+      strokeColor: '#BF360C',
+      fillOpacity: 0.9,
+      strokeWidth: 2,
+      label: {
+        offset: [8, 6],
+        fontSize: 13,
+        fontWeight: 'bold',
+        strokeColor: '#FF6D00',
+      },
+      cursor: 'pointer',
+    });
+
+    // Hidden anchor point for direction arrow tip
+    this.dirEndPt = brd.create('point', [0.65, 0.5], {
+      visible: false,
+      fixed: false,
+    });
+
+    // Direction arrow
+    brd.create('arrow', [this.strainPt, this.dirEndPt], {
+      strokeColor: '#FF6D00',
+      strokeWidth: 2.5,
+      lastArrow: { type: 1, size: 8 },
+      fixed: true,
+    });
+
+    this.strainPt.on('drag', () => {
+      this.strainPointX = this.strainPt.X();
+      this.strainPointY = this.strainPt.Y();
+      this.updateDirArrow();
+    });
 
     setTimeout(() => {
       this.CLICK_FINAL();
@@ -326,6 +577,15 @@ export default {
         }
       }
     },
+    updateDirArrow() {
+      if (!this.dirEndPt || !this.boardObj) return;
+      const len = 0.18;
+      const theta = this.directionAngle * Math.PI / 180;
+      const ex = this.strainPointX + len * Math.cos(theta);
+      const ey = this.strainPointY + len * Math.sin(theta);
+      this.dirEndPt.setPosition(JXG.COORDS_BY_USER, [ex, ey]);
+      this.boardObj.update();
+    },
   },
 };
 </script>
@@ -367,6 +627,9 @@ export default {
   background: linear-gradient(90deg, #00695C, #00897B);
   border-radius: 8px 8px 0 0;
 }
+.section-header--strain {
+  background: linear-gradient(90deg, #BF360C, #E64A19);
+}
 
 .formula-strip {
   background: #E8F5E9;
@@ -377,7 +640,8 @@ export default {
 
 /* Cards */
 .coeff-card,
-.viz-card {
+.viz-card,
+.strain-card {
   border-radius: 10px;
   box-shadow: 0 2px 12px rgba(0,0,0,0.08);
   overflow: hidden;
@@ -467,5 +731,146 @@ export default {
 .jxgbox svg text {
   cursor: default;
   user-select: none;
+}
+
+/* ── Strain analysis ── */
+
+.strain-section-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #BF360C;
+  margin-bottom: 6px;
+}
+
+.strain-hint {
+  font-size: 11px;
+  color: #999;
+  line-height: 1.4;
+}
+
+.angle-display {
+  font-size: 17px;
+  font-weight: 700;
+  color: #E64A19;
+  min-width: 44px;
+  font-family: 'Roboto Mono', monospace;
+}
+
+/* Tensor matrix */
+.tensor-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 8px 0 4px;
+}
+
+.tensor-bracket-left {
+  width: 8px;
+  height: 80px;
+  border: 2px solid #8D6E63;
+  border-right: none;
+  border-radius: 3px 0 0 3px;
+  margin-right: 4px;
+}
+
+.tensor-bracket-right {
+  width: 8px;
+  height: 80px;
+  border: 2px solid #8D6E63;
+  border-left: none;
+  border-radius: 0 3px 3px 0;
+  margin-left: 4px;
+}
+
+.tensor-table {
+  border-collapse: separate;
+  border-spacing: 5px;
+}
+
+.tensor-table td {
+  text-align: center;
+  padding: 6px 14px;
+  background: #FFF3E0;
+  border-radius: 4px;
+  min-width: 90px;
+}
+
+.tensor-label {
+  font-size: 10px;
+  color: #A1887F;
+  margin-bottom: 2px;
+}
+
+.tensor-value {
+  font-size: 14px;
+  font-weight: 700;
+  color: #BF360C;
+  font-family: 'Roboto Mono', monospace;
+}
+
+/* Normal strain box */
+.normal-strain-box {
+  background: #FFF3E0;
+  border-radius: 8px;
+  padding: 10px 14px;
+  text-align: center;
+  border-left: 4px solid #E64A19;
+}
+
+.normal-strain-formula {
+  font-size: 10px;
+  color: #A1887F;
+  margin-bottom: 4px;
+}
+
+.normal-strain-label {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: #BF360C;
+  letter-spacing: 0.3px;
+  margin-bottom: 2px;
+}
+
+.normal-strain-value {
+  font-size: 22px;
+  font-weight: 700;
+  color: #BF360C;
+  font-family: 'Roboto Mono', monospace;
+  letter-spacing: 1px;
+}
+
+/* Shear strain box */
+.shear-strain-box {
+  background: #FBE9E7;
+  border-radius: 8px;
+  padding: 10px 14px;
+  text-align: center;
+  border-left: 4px solid #FF7043;
+}
+
+.shear-formula {
+  font-size: 10px;
+  color: #A1887F;
+  margin-bottom: 4px;
+}
+
+.shear-strain-label {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: #D84315;
+  letter-spacing: 0.3px;
+  margin-bottom: 2px;
+}
+
+.shear-value {
+  font-size: 22px;
+  font-weight: 700;
+  color: #D84315;
+  font-family: 'Roboto Mono', monospace;
+  letter-spacing: 1px;
 }
 </style>
