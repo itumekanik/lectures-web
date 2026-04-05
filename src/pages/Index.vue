@@ -637,10 +637,8 @@ export default {
     const cy0 = this.strainPointY;
 
     const ptOpts = { visible: false, fixed: false, name: '' };
-    const dotOpts = (color) => ({
-      visible: true, fixed: false, name: '',
-      size: 4, fillColor: color, strokeColor: color, strokeWidth: 1,
-      highlight: false,
+    const dotOpts = () => ({
+      visible: false, fixed: false, name: '',
     });
 
     // Reference cross anchor points (gray dashed, always at P + initial directions)
@@ -650,10 +648,10 @@ export default {
     this.refD = brd.create('point', [cx0 + len * Math.sin(th0), cy0 - len * Math.cos(th0)], ptOpts);
 
     // Deformed cross tip points (colored, animated)
-    this.tipA = brd.create('point', [cx0 - len * Math.cos(th0), cy0 - len * Math.sin(th0)], dotOpts('#1565C0'));
-    this.tipB = brd.create('point', [cx0 + len * Math.cos(th0), cy0 + len * Math.sin(th0)], dotOpts('#1565C0'));
-    this.tipC = brd.create('point', [cx0 - len * Math.sin(th0), cy0 + len * Math.cos(th0)], dotOpts('#00897B'));
-    this.tipD = brd.create('point', [cx0 + len * Math.sin(th0), cy0 - len * Math.cos(th0)], dotOpts('#00897B'));
+    this.tipA = brd.create('point', [cx0 - len * Math.cos(th0), cy0 - len * Math.sin(th0)], dotOpts());
+    this.tipB = brd.create('point', [cx0 + len * Math.cos(th0), cy0 + len * Math.sin(th0)], dotOpts());
+    this.tipC = brd.create('point', [cx0 - len * Math.sin(th0), cy0 + len * Math.cos(th0)], dotOpts());
+    this.tipD = brd.create('point', [cx0 + len * Math.sin(th0), cy0 - len * Math.cos(th0)], dotOpts());
 
     // Reference segments — gray dashed
     brd.create('segment', [this.refA, this.refB], {
@@ -667,10 +665,10 @@ export default {
 
     // Deformed segments — colored solid
     brd.create('segment', [this.tipA, this.tipB], {
-      strokeColor: '#1565C0', strokeWidth: 2.5, highlight: false,
+      strokeColor: '#E53935', strokeWidth: 2.5, highlight: false,
     });
     brd.create('segment', [this.tipC, this.tipD], {
-      strokeColor: '#00897B', strokeWidth: 2.5, highlight: false,
+      strokeColor: '#7B1FA2', strokeWidth: 2.5, highlight: false,
     });
 
     // Center of cross = midpoint of n-arm (reactive in JSXGraph)
@@ -692,13 +690,13 @@ export default {
       () => this.tipB.X() + 0.02,
       () => this.tipB.Y(),
       'n',
-    ], { fontSize: 11, color: '#1565C0', anchorX: 'left', highlight: false });
+    ], { fontSize: 11, color: '#E53935', anchorX: 'left', highlight: false });
 
     brd.create('text', [
       () => this.tipC.X() + 0.01,
       () => this.tipC.Y() + 0.02,
       's',
-    ], { fontSize: 11, color: '#00897B', anchorX: 'left', highlight: false });
+    ], { fontSize: 11, color: '#7B1FA2', anchorX: 'left', highlight: false });
 
     // ── Drag handler ─────────────────────────────────────────────────────────
     this.strainPt.on('drag', () => {
